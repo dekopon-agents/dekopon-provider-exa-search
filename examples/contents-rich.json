@@ -1,0 +1,51 @@
+{
+  "text": {
+    "maxCharacters": 4000,
+    "includeHtmlTags": false,
+    "verbosity": "standard",
+    "includeSections": [
+      "body",
+      "header"
+    ],
+    "excludeSections": [
+      "footer",
+      "navigation"
+    ]
+  },
+  "highlights": {
+    "query": "measured water savings",
+    "maxCharacters": 1500
+  },
+  "summary": {
+    "query": "Describe trial design",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "finding": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "finding"
+      ]
+    }
+  },
+  "extras": {
+    "links": 2,
+    "imageLinks": 1,
+    "richImageLinks": 1,
+    "richLinks": 2,
+    "codeBlocks": 1
+  },
+  "maxAgeHours": 0,
+  "livecrawlTimeout": 12000,
+  "subpages": 1,
+  "subpageTarget": [
+    "methods",
+    "data"
+  ],
+  "urls": [
+    "https://example.org/research/orchard",
+    "https://example.org/missing"
+  ]
+}

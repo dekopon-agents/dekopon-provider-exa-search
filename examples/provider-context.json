@@ -1,0 +1,10 @@
+{
+  "native": {
+    "query": "synthetic code context",
+    "tokensNum": 5000
+  },
+  "output": {
+    "mode": "relevant",
+    "maxBytes": 32768
+  }
+}

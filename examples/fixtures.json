@@ -1,0 +1,252 @@
+[
+  {
+    "file": "examples/search-minimal.json",
+    "schema": "schemas/upstream/search-request.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/search-rich.json",
+    "schema": "schemas/upstream/search-request.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/search-response.json",
+    "schema": "schemas/upstream/search-response.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/contents-minimal.json",
+    "schema": "schemas/upstream/contents-request.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/contents-rich.json",
+    "schema": "schemas/upstream/contents-request.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/contents-response.json",
+    "schema": "schemas/upstream/contents-response.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/context-minimal.json",
+    "schema": "schemas/upstream/context-request.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/context-rich.json",
+    "schema": "schemas/upstream/context-request.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/context-response.json",
+    "schema": "schemas/upstream/context-response.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/answer-minimal.json",
+    "schema": "schemas/upstream/answer-request.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/answer-rich.json",
+    "schema": "schemas/upstream/answer-request.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/answer-response.json",
+    "schema": "schemas/upstream/answer-response.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/headers-stable.json",
+    "schema": "schemas/headers.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/headers-beta.json",
+    "schema": "schemas/headers.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-contents.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-context.json",
+    "schema": "schemas/provider/context-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-beta.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-output.json",
+    "schema": "schemas/provider/output.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/invalid/missing-query.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/nondeep-additional.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/people-date.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/beta-without-optin.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/dynamic-character-conflict.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/streaming.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/contents-both-identifiers.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/text-over-limit.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/deprecated-livecrawl.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/context-token-small.json",
+    "schema": "schemas/provider/context-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/unknown-field.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/search-entities-response.json",
+    "schema": "schemas/upstream/search-response.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/invalid/search-start-date-format.json",
+    "schema": "schemas/upstream/search-request.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/search-published-date-format.json",
+    "schema": "schemas/upstream/search-response.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/search-url-format.json",
+    "schema": "schemas/upstream/search-response.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/search-contents-unknown-field.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/provider-search-null-contents.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-null-category-filters.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-null-highlights.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-null-beta-options.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-dynamic-null-characters.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-verbosity-null-characters.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/invalid/search-false-dynamic-without-optin.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/search-verbosity-character-conflict.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/provider-contents-null-highlights.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-contents-null-beta-options.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-contents-dynamic-null-characters.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-contents-verbosity-null-characters.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/invalid/contents-false-dynamic-without-optin.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/contents-verbosity-character-conflict.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/contents-dynamic-character-conflict.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": false
+  }
+]

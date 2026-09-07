@@ -1,0 +1,6 @@
+{
+  "native": {
+    "query": "x",
+    "stream": true
+  }
+}

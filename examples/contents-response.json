@@ -1,0 +1,78 @@
+{
+  "requestId": "synthetic-contents-001",
+  "results": [
+    {
+      "title": "Synthetic orchard sensor trial",
+      "url": "https://example.org/research/orchard",
+      "id": "https://example.org/research/orchard",
+      "publishedDate": "2026-02-03T00:00:00Z",
+      "author": null,
+      "image": "https://example.org/orchard.png",
+      "favicon": "https://example.org/favicon.ico",
+      "text": "Synthetic example: sensors guided irrigation in an illustrative orchard trial.",
+      "highlights": [
+        "Synthetic example: sensors guided irrigation."
+      ],
+      "highlightScores": [
+        0.72
+      ],
+      "summary": "{\"finding\":\"Illustrative trial only; not observed evidence.\"}",
+      "subpages": [
+        {
+          "title": "Synthetic methods",
+          "url": "https://example.org/research/orchard/methods"
+        }
+      ],
+      "extras": {
+        "links": [
+          "https://example.org/data"
+        ],
+        "imageLinks": [
+          "https://example.org/orchard.png"
+        ],
+        "richImageLinks": [
+          {
+            "url": "https://example.org/orchard.png",
+            "alt": "Illustrative orchard"
+          }
+        ],
+        "richLinks": [
+          {
+            "url": "https://example.org/data",
+            "anchor": "Synthetic data"
+          }
+        ],
+        "codeBlocks": [
+          {
+            "text": "sample_count = 3",
+            "source": "python"
+          }
+        ]
+      }
+    }
+  ],
+  "statuses": [
+    {
+      "id": "https://example.org/research/orchard",
+      "status": "success",
+      "source": "crawled"
+    },
+    {
+      "id": "https://example.org/missing",
+      "status": "error",
+      "error": {
+        "tag": "CRAWL_NOT_FOUND",
+        "httpStatusCode": 404
+      }
+    }
+  ],
+  "costDollars": {
+    "total": 0.003,
+    "contents": {
+      "text": 0.001,
+      "highlights": 0.001,
+      "summary": 0.001
+    }
+  },
+  "searchTime": 210.1
+}

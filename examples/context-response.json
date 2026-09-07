@@ -1,0 +1,11 @@
+{
+  "requestId": "synthetic-context-001",
+  "query": "Python grouping synthetic orchard measurements by sensor identifier",
+  "response": "## Synthetic example\nhttps://example.org/code/grouping\n```python\ngroups = {}\n```\nIllustrative context only, not a live API result.",
+  "resultsCount": 2,
+  "costDollars": {
+    "total": 0.001
+  },
+  "searchTime": 250.0,
+  "outputTokens": 50
+}

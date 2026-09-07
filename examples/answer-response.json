@@ -1,0 +1,19 @@
+{
+  "requestId": "synthetic-answer-001",
+  "answer": {
+    "explanation": "Synthetic explanation, not a live generated answer."
+  },
+  "citations": [
+    {
+      "title": "Synthetic orchard sensor trial",
+      "url": "https://example.org/research/orchard",
+      "text": "Synthetic example: sensors guided irrigation in an illustrative orchard trial.",
+      "publishedDate": "2026-02-03T00:00:00Z",
+      "author": null,
+      "id": "https://example.org/research/orchard"
+    }
+  ],
+  "costDollars": {
+    "total": 0.005
+  }
+}

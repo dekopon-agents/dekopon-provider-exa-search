@@ -1,0 +1,12 @@
+{
+  "native": {
+    "urls": [
+      "https://example.org"
+    ],
+    "highlights": {
+      "dynamic": null,
+      "verbosity": null,
+      "maxCharacters": 100
+    }
+  }
+}

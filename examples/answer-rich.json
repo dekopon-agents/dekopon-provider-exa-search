@@ -1,0 +1,20 @@
+{
+  "query": "Explain irrigation sensor limitations",
+  "model": "exa",
+  "stream": false,
+  "text": true,
+  "userLocation": "US",
+  "systemPrompt": "State uncertainty.",
+  "outputSchema": {
+    "type": "object",
+    "properties": {
+      "explanation": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "explanation"
+    ],
+    "additionalProperties": false
+  }
+}

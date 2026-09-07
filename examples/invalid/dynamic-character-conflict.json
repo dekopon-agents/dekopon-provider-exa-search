@@ -1,0 +1,12 @@
+{
+  "native": {
+    "query": "x",
+    "contents": {
+      "highlights": {
+        "dynamic": true,
+        "maxCharacters": 100
+      }
+    }
+  },
+  "betaDynamicHighlights": true
+}

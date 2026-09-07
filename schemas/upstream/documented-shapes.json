@@ -1,0 +1,3289 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Documented structural shapes adapted from official Exa OpenAPI 2026-09-07; Context is a prose-derived subset. Not a complete validator of live API behavior. Vendor prose/examples removed; no runtime enforcement claim.",
+  "$defs": {
+    "SearchRequest": {
+      "type": "object",
+      "properties": {
+        "includeDomains": {
+          "anyOf": [
+            {
+              "maxItems": 1200,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "excludeDomains": {
+          "anyOf": [
+            {
+              "maxItems": 1200,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "startCrawlDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time",
+              "deprecated": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "endCrawlDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time",
+              "deprecated": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "startPublishedDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "endPublishedDate": {
+          "anyOf": [
+            {
+              "type": "string",
+              "format": "date-time"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "numResults": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "default": 10
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "context": {
+          "anyOf": [
+            {
+              "deprecated": true,
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "deprecated": true
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "maxCharacters": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 10000
+                    }
+                  },
+                  "deprecated": true
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "moderation": {
+          "anyOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "contents": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ContentsOptions"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "query": {
+          "type": "string",
+          "minLength": 1
+        },
+        "additionalQueries": {
+          "anyOf": [
+            {
+              "minItems": 1,
+              "maxItems": 10,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "instant",
+                "fast",
+                "auto",
+                "deep-lite",
+                "deep",
+                "deep-reasoning"
+              ],
+              "default": "auto"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "company",
+                "publication",
+                "news",
+                "personal site",
+                "financial report",
+                "people"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "userLocation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "compliance": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "hipaa"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "outputSchema": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "text"
+                    },
+                    "description": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "object"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "$ref": "#/$defs/JsonValue"
+                      }
+                    },
+                    "required": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "additionalProperties": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "type"
+                  ],
+                  "additionalProperties": {
+                    "$ref": "#/$defs/JsonValue"
+                  }
+                }
+              ],
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "systemPrompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "stream": {
+          "anyOf": [
+            {
+              "type": "boolean",
+              "default": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "SearchResponse": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/SearchResultOutput"
+              }
+            },
+            "resolvedSearchType": {
+              "deprecated": true,
+              "type": "string"
+            },
+            "context": {
+              "type": "string",
+              "deprecated": true
+            },
+            "costDollars": {
+              "$ref": "#/$defs/CostDollarsOutput"
+            },
+            "searchTime": {
+              "type": "number"
+            },
+            "output": {
+              "$ref": "#/$defs/SearchSynthesisOutputOutput"
+            }
+          },
+          "required": [
+            "results",
+            "output"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/SearchResultOutput"
+              }
+            },
+            "resolvedSearchType": {
+              "deprecated": true,
+              "type": "string"
+            },
+            "context": {
+              "type": "string",
+              "deprecated": true
+            },
+            "costDollars": {
+              "$ref": "#/$defs/CostDollarsOutput"
+            },
+            "searchTime": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "results"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "SearchStreamChunk": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "const": "text-delta"
+            },
+            "delta": {
+              "type": "string"
+            },
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "index": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "delta": {
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "const": "assistant"
+                      },
+                      "content": {
+                        "type": "string"
+                      },
+                      "citations": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "url": {
+                              "type": "string",
+                              "format": "uri"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "url",
+                            "title",
+                            "id"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "finish_reason": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "const": "stop"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "index",
+                  "delta",
+                  "finish_reason"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "type",
+            "delta"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "const": "grounding"
+            },
+            "grounding": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "field": {
+                    "type": "string"
+                  },
+                  "citations": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "url": {
+                          "type": "string",
+                          "format": "uri"
+                        },
+                        "title": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "url",
+                        "title"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "confidence": {
+                    "type": "string",
+                    "enum": [
+                      "low",
+                      "medium",
+                      "high"
+                    ]
+                  }
+                },
+                "required": [
+                  "field",
+                  "citations",
+                  "confidence"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "citations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "id": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "url",
+                  "title",
+                  "id"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "index": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "delta": {
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "const": "assistant"
+                      },
+                      "content": {
+                        "type": "string"
+                      },
+                      "citations": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "url": {
+                              "type": "string",
+                              "format": "uri"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "url",
+                            "title",
+                            "id"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "finish_reason": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "const": "stop"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "index",
+                  "delta",
+                  "finish_reason"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "type",
+            "grounding"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "const": "results"
+            },
+            "results": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/SearchResultOutput"
+              }
+            }
+          },
+          "required": [
+            "type",
+            "results"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "const": "stream-reset"
+            },
+            "streamReset": {
+              "type": "boolean",
+              "const": true
+            }
+          },
+          "required": [
+            "type",
+            "streamReset"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "const": "done"
+            },
+            "output": {
+              "anyOf": [
+                {
+                  "$ref": "#/$defs/SearchSynthesisOutputOutput"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "searchTime": {
+              "type": "number"
+            },
+            "costDollars": {
+              "$ref": "#/$defs/CostDollarsOutput"
+            },
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "index": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "delta": {
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "const": "assistant"
+                      },
+                      "content": {
+                        "type": "string"
+                      },
+                      "citations": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "url": {
+                              "type": "string",
+                              "format": "uri"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "id": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "url",
+                            "title",
+                            "id"
+                          ],
+                          "additionalProperties": false
+                        }
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "finish_reason": {
+                    "oneOf": [
+                      {
+                        "type": "string",
+                        "const": "stop"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "index",
+                  "delta",
+                  "finish_reason"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "type",
+            "output",
+            "searchTime"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "requestId": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "const": "error"
+            },
+            "error": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "message"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "type",
+            "error"
+          ],
+          "additionalProperties": false
+        }
+      ],
+      "type": "object"
+    },
+    "ErrorResponse": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string"
+        },
+        "error": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "requestId",
+        "error",
+        "tag"
+      ],
+      "additionalProperties": false
+    },
+    "ContentsOptions": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "default": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "maxCharacters": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 10000
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "includeHtmlTags": {
+                      "anyOf": [
+                        {
+                          "type": "boolean",
+                          "default": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "verbosity": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "compact",
+                            "standard",
+                            "full"
+                          ],
+                          "default": "compact"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "includeSections": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "header",
+                              "navigation",
+                              "banner",
+                              "body",
+                              "sidebar",
+                              "footer",
+                              "metadata"
+                            ]
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "excludeSections": {
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "enum": [
+                              "header",
+                              "navigation",
+                              "banner",
+                              "body",
+                              "sidebar",
+                              "footer",
+                              "metadata"
+                            ]
+                          }
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "highlights": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "default": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "query": {
+                      "anyOf": [
+                        {
+                          "type": "string"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "verbosity": {
+                      "anyOf": [
+                        {
+                          "type": "string",
+                          "enum": [
+                            "low",
+                            "medium",
+                            "high"
+                          ]
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "dynamic": {
+                      "anyOf": [
+                        {
+                          "type": "boolean"
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "maxCharacters": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "maximum": 10000
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "numSentences": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "deprecated": true
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    },
+                    "highlightsPerUrl": {
+                      "anyOf": [
+                        {
+                          "type": "integer",
+                          "minimum": 1,
+                          "deprecated": true
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "anyOf": [
+                    {
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "propertyNames": {
+                        "type": "string"
+                      },
+                      "additionalProperties": {
+                        "$ref": "#/$defs/JsonValue"
+                      }
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "extras": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "links": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000,
+                      "default": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "imageLinks": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000,
+                      "default": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "richImageLinks": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000,
+                      "default": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "richLinks": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000,
+                      "default": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "codeBlocks": {
+                  "anyOf": [
+                    {
+                      "type": "integer",
+                      "minimum": 0,
+                      "maximum": 1000,
+                      "default": 0
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "context": {
+          "anyOf": [
+            {
+              "deprecated": true,
+              "oneOf": [
+                {
+                  "type": "boolean",
+                  "deprecated": true
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "maxCharacters": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 10000
+                    }
+                  },
+                  "deprecated": true
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "livecrawl": {
+          "anyOf": [
+            {
+              "type": "string",
+              "enum": [
+                "never",
+                "always",
+                "fallback",
+                "preferred"
+              ],
+              "deprecated": true
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "livecrawlTimeout": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 90000,
+              "default": 10000
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maxAgeHours": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": -1,
+              "maximum": 720
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subpages": {
+          "anyOf": [
+            {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100,
+              "default": 0
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "subpageTarget": {
+          "anyOf": [
+            {
+              "oneOf": [
+                {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 100
+                },
+                {
+                  "minItems": 0,
+                  "maxItems": 100,
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  }
+                }
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "JsonValue": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "number"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        },
+        {
+          "type": "object",
+          "propertyNames": {
+            "type": "string"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        }
+      ]
+    },
+    "SearchResultOutput": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "publishedDate": {
+          "format": "date-time",
+          "type": "string"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "image": {
+          "format": "uri",
+          "type": "string"
+        },
+        "favicon": {
+          "format": "uri",
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "highlights": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "highlightScores": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "summary": {
+          "type": "string"
+        },
+        "subpages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "publishedDate": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "author": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "id": {
+                "type": "string"
+              },
+              "image": {
+                "format": "uri",
+                "type": "string"
+              },
+              "favicon": {
+                "format": "uri",
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "url"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "entities": {
+          "type": "array",
+          "items": {
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "const": "company"
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "properties": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "foundedYear": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "description": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "workforce": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "total": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "total"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "headquarters": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "address": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "city": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "postalCode": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "country": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "address",
+                              "city",
+                              "postalCode",
+                              "country"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "financials": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "revenueAnnual": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "fundingTotal": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "fundingLatestRound": {
+                                "anyOf": [
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "date": {
+                                        "anyOf": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      },
+                                      "amount": {
+                                        "anyOf": [
+                                          {
+                                            "type": "number"
+                                          },
+                                          {
+                                            "type": "null"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "required": [
+                                      "name",
+                                      "date",
+                                      "amount"
+                                    ],
+                                    "additionalProperties": false
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              }
+                            },
+                            "required": [
+                              "revenueAnnual",
+                              "fundingTotal",
+                              "fundingLatestRound"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "webTraffic": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "visitsMonthly": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "countryRank": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "avgDurationSeconds": {
+                                "anyOf": [
+                                  {
+                                    "type": "number"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "history": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "value": {
+                                      "type": "number"
+                                    },
+                                    "dateFrom": {
+                                      "type": "string"
+                                    },
+                                    "dateTo": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "required": [
+                                    "value",
+                                    "dateFrom",
+                                    "dateTo"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "visitsMonthly",
+                              "countryRank",
+                              "avgDurationSeconds",
+                              "history"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "research": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "worksCount": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "citationCount": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "areas": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "notableWorks": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "title": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "year": {
+                                      "anyOf": [
+                                        {
+                                          "type": "integer"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "venue": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "citationCount": {
+                                      "anyOf": [
+                                        {
+                                          "type": "integer"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "doi": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "id": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "type": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "article",
+                                            "book",
+                                            "book-chapter",
+                                            "dataset",
+                                            "dissertation",
+                                            "preprint",
+                                            "report",
+                                            "review"
+                                          ]
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "title",
+                                    "year",
+                                    "venue",
+                                    "citationCount",
+                                    "doi",
+                                    "id",
+                                    "type"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              },
+                              "topResearchers": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "person": {
+                                      "anyOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "name": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "string"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            },
+                                            "id": {
+                                              "anyOf": [
+                                                {
+                                                  "type": "string"
+                                                },
+                                                {
+                                                  "type": "null"
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          "required": [
+                                            "name",
+                                            "id"
+                                          ],
+                                          "additionalProperties": false
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "worksCount": {
+                                      "anyOf": [
+                                        {
+                                          "type": "integer"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "citationCount": {
+                                      "anyOf": [
+                                        {
+                                          "type": "integer"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "person",
+                                    "worksCount",
+                                    "citationCount"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "worksCount",
+                              "citationCount",
+                              "areas",
+                              "notableWorks",
+                              "topResearchers"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "foundedYear",
+                      "description",
+                      "workforce",
+                      "headquarters",
+                      "financials",
+                      "webTraffic",
+                      "research"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "type",
+                  "version",
+                  "properties"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "const": "person"
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "properties": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "firstName": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "lastName": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "location": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "workHistory": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "title": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "location": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "dates": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "from": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "to": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "from",
+                                    "to"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "company": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "name": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "name"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "title",
+                            "location",
+                            "dates",
+                            "company"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "educationHistory": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "degree": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "dates": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "from": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "to": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "from",
+                                    "to"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "institution": {
+                              "anyOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "name": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "id",
+                                    "name"
+                                  ],
+                                  "additionalProperties": false
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "degree",
+                            "dates",
+                            "institution"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "research": {
+                        "anyOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "worksCount": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "citationCount": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "hIndex": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "firstPublicationYear": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "latestPublicationYear": {
+                                "anyOf": [
+                                  {
+                                    "type": "integer"
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "areas": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "notableWorks": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "title": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "year": {
+                                      "anyOf": [
+                                        {
+                                          "type": "integer"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "venue": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "citationCount": {
+                                      "anyOf": [
+                                        {
+                                          "type": "integer"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "doi": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "id": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string"
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    },
+                                    "type": {
+                                      "anyOf": [
+                                        {
+                                          "type": "string",
+                                          "enum": [
+                                            "article",
+                                            "book",
+                                            "book-chapter",
+                                            "dataset",
+                                            "dissertation",
+                                            "preprint",
+                                            "report",
+                                            "review"
+                                          ]
+                                        },
+                                        {
+                                          "type": "null"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "required": [
+                                    "title",
+                                    "year",
+                                    "venue",
+                                    "citationCount",
+                                    "doi",
+                                    "id",
+                                    "type"
+                                  ],
+                                  "additionalProperties": false
+                                }
+                              }
+                            },
+                            "required": [
+                              "worksCount",
+                              "citationCount",
+                              "hIndex",
+                              "firstPublicationYear",
+                              "latestPublicationYear",
+                              "areas",
+                              "notableWorks"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "firstName",
+                      "lastName",
+                      "location",
+                      "workHistory",
+                      "educationHistory",
+                      "research"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "type",
+                  "version",
+                  "properties"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string"
+                  },
+                  "type": {
+                    "type": "string",
+                    "const": "publication"
+                  },
+                  "version": {
+                    "type": "integer",
+                    "minimum": 1
+                  },
+                  "properties": {
+                    "type": "object",
+                    "properties": {
+                      "title": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "year": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "date": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "type": {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "enum": [
+                              "article",
+                              "book",
+                              "book-chapter",
+                              "dataset",
+                              "dissertation",
+                              "preprint",
+                              "report",
+                              "review"
+                            ]
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "language": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "citationCount": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "authors": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            },
+                            "id": {
+                              "anyOf": [
+                                {
+                                  "type": "string"
+                                },
+                                {
+                                  "type": "null"
+                                }
+                              ]
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "id"
+                          ],
+                          "additionalProperties": false
+                        }
+                      },
+                      "referenceCount": {
+                        "anyOf": [
+                          {
+                            "type": "integer"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "abstract": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "doi": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "required": [
+                      "title",
+                      "year",
+                      "date",
+                      "type",
+                      "language",
+                      "citationCount",
+                      "authors",
+                      "referenceCount",
+                      "abstract",
+                      "doi"
+                    ],
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "id",
+                  "type",
+                  "version",
+                  "properties"
+                ],
+                "additionalProperties": false
+              }
+            ],
+            "type": "object"
+          }
+        },
+        "extras": {
+          "type": "object",
+          "properties": {
+            "links": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "imageLinks": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "richImageLinks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "alt": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "url"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "richLinks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "url": {
+                    "type": "string"
+                  },
+                  "anchor": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "url"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "codeBlocks": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "type": "string"
+                  },
+                  "source": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "text",
+                  "source"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "title",
+        "url"
+      ],
+      "additionalProperties": false
+    },
+    "CostDollarsOutput": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "format": "float",
+          "type": "number"
+        },
+        "search": {
+          "type": "object",
+          "properties": {
+            "neural": {
+              "format": "float",
+              "type": "number"
+            },
+            "keyword": {
+              "format": "float",
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        },
+        "summary": {
+          "format": "float",
+          "type": "number"
+        },
+        "contents": {
+          "type": "object",
+          "properties": {
+            "text": {
+              "format": "float",
+              "type": "number"
+            },
+            "highlights": {
+              "format": "float",
+              "type": "number"
+            },
+            "summary": {
+              "format": "float",
+              "type": "number"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "SearchSynthesisOutputOutput": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              }
+            }
+          ]
+        },
+        "grounding": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "field": {
+                "type": "string"
+              },
+              "citations": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "url": {
+                      "type": "string",
+                      "format": "uri"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "url",
+                    "title"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "confidence": {
+                "type": "string",
+                "enum": [
+                  "low",
+                  "medium",
+                  "high"
+                ]
+              }
+            },
+            "required": [
+              "field",
+              "citations",
+              "confidence"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "content",
+        "grounding"
+      ],
+      "additionalProperties": false
+    },
+    "ContentsRequest": {
+      "allOf": [
+        {
+          "type": "object",
+          "properties": {
+            "ids": {
+              "minItems": 1,
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              }
+            },
+            "urls": {
+              "minItems": 1,
+              "maxItems": 100,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 2048
+              }
+            },
+            "compliance": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "enum": [
+                    "hipaa"
+                  ]
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "ids"
+              ]
+            },
+            {
+              "required": [
+                "urls"
+              ]
+            }
+          ]
+        },
+        {
+          "$ref": "#/$defs/ContentsOptions"
+        }
+      ]
+    },
+    "ContentsResponse": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string"
+        },
+        "results": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SearchResultOutput"
+          }
+        },
+        "context": {
+          "type": "string",
+          "deprecated": true
+        },
+        "statuses": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string",
+                "enum": [
+                  "success",
+                  "error"
+                ]
+              },
+              "source": {
+                "type": "string",
+                "enum": [
+                  "cached",
+                  "crawled"
+                ]
+              },
+              "error": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "tag": {
+                        "type": "string"
+                      },
+                      "httpStatusCode": {
+                        "anyOf": [
+                          {
+                            "type": "integer",
+                            "minimum": 100,
+                            "maximum": 599
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "id",
+              "status"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "costDollars": {
+          "$ref": "#/$defs/CostDollarsOutput"
+        },
+        "searchTime": {
+          "type": "number"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AnswerRequest": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1
+        },
+        "stream": {
+          "type": "boolean",
+          "default": false
+        },
+        "text": {
+          "type": "boolean",
+          "default": false
+        },
+        "model": {
+          "default": "exa",
+          "type": "string",
+          "enum": [
+            "exa",
+            "exa-pro",
+            "exa-research",
+            "exa-fast"
+          ]
+        },
+        "systemPrompt": {
+          "type": "string"
+        },
+        "userLocation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "outputSchema": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            },
+            "properties": {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              }
+            },
+            "required": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "description": {
+              "type": "string"
+            },
+            "additionalProperties": {
+              "type": "boolean",
+              "default": false
+            }
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "AnswerResponse": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string"
+        },
+        "answer": {
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "object",
+              "propertyNames": {
+                "type": "string"
+              },
+              "additionalProperties": {
+                "$ref": "#/$defs/JsonValue"
+              }
+            }
+          ]
+        },
+        "citations": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "publishedDate": {
+                "format": "date-time",
+                "type": "string"
+              },
+              "author": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "id": {
+                "type": "string"
+              },
+              "image": {
+                "format": "uri",
+                "type": "string"
+              },
+              "favicon": {
+                "format": "uri",
+                "type": "string"
+              },
+              "text": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "title",
+              "url"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "costDollars": {
+          "$ref": "#/$defs/CostDollarsOutput"
+        }
+      },
+      "required": [
+        "answer"
+      ],
+      "additionalProperties": false
+    },
+    "AnswerStreamChunk": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "choices": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "index": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "delta": {
+                    "type": "object",
+                    "properties": {
+                      "role": {
+                        "type": "string",
+                        "const": "assistant"
+                      },
+                      "content": {
+                        "type": "string"
+                      },
+                      "refusal": {
+                        "anyOf": [
+                          {
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      }
+                    },
+                    "additionalProperties": {
+                      "$ref": "#/$defs/JsonValue"
+                    }
+                  },
+                  "finish_reason": {
+                    "oneOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "index",
+                  "delta"
+                ],
+                "additionalProperties": {
+                  "$ref": "#/$defs/JsonValue"
+                }
+              }
+            }
+          },
+          "required": [
+            "choices"
+          ],
+          "additionalProperties": {
+            "$ref": "#/$defs/JsonValue"
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "citations": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string"
+                  },
+                  "url": {
+                    "type": "string",
+                    "format": "uri"
+                  },
+                  "publishedDate": {
+                    "format": "date-time",
+                    "type": "string"
+                  },
+                  "author": {
+                    "anyOf": [
+                      {
+                        "type": "string"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "id": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "format": "uri",
+                    "type": "string"
+                  },
+                  "favicon": {
+                    "format": "uri",
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "title",
+                  "url"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "citations"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "costDollars": {
+              "$ref": "#/$defs/CostDollarsOutput"
+            },
+            "requestId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "costDollars"
+          ],
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "properties": {
+            "tag": {
+              "type": "string",
+              "const": "ERROR"
+            },
+            "payload": {
+              "type": "object",
+              "properties": {
+                "error": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                },
+                "requestId": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "error"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "tag",
+            "payload"
+          ],
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ContextRequest": {
+      "type": "object",
+      "properties": {
+        "query": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "tokensNum": {
+          "oneOf": [
+            {
+              "type": "integer",
+              "minimum": 50,
+              "maximum": 100000
+            },
+            {
+              "const": "dynamic",
+              "type": "string"
+            }
+          ],
+          "default": "dynamic"
+        }
+      },
+      "required": [
+        "query"
+      ]
+    },
+    "ContextResponse": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": "string"
+        },
+        "query": {
+          "type": "string"
+        },
+        "response": {
+          "type": "string"
+        },
+        "resultsCount": {
+          "type": "integer"
+        },
+        "costDollars": {
+          "type": "object",
+          "$comment": "Context documented subset: only total and search.neural are sourced. Other breakdowns are unknown and left open for bounded raw preservation.",
+          "properties": {
+            "total": {
+              "type": "number"
+            },
+            "search": {
+              "type": "object",
+              "properties": {
+                "neural": {
+                  "type": "number"
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "additionalProperties": true
+        },
+        "searchTime": {
+          "type": "number"
+        },
+        "outputTokens": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "response"
+      ]
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "query": "orchard irrigation sensor research",
+  "type": "deep",
+  "additionalQueries": [
+    "soil moisture sensor evaluations",
+    "water-efficient orchard field trials"
+  ],
+  "category": "publication",
+  "includeDomains": [
+    "example.org/research",
+    "*.example.edu"
+  ],
+  "excludeDomains": [
+    "example.net"
+  ],
+  "startPublishedDate": "2025-01-01T00:00:00Z",
+  "endPublishedDate": "2026-09-01T00:00:00Z",
+  "numResults": 3,
+  "moderation": true,
+  "userLocation": "US",
+  "systemPrompt": "Prefer primary studies; distinguish measured from estimated savings.",
+  "contents": {
+    "text": {
+      "maxCharacters": 4000,
+      "includeHtmlTags": false,
+      "verbosity": "standard",
+      "includeSections": [
+        "body",
+        "header"
+      ],
+      "excludeSections": [
+        "footer",
+        "navigation"
+      ]
+    },
+    "highlights": {
+      "query": "measured water savings",
+      "maxCharacters": 1500
+    },
+    "summary": {
+      "query": "Describe trial design",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "finding": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "finding"
+        ]
+      }
+    },
+    "extras": {
+      "links": 2,
+      "imageLinks": 1,
+      "richImageLinks": 1,
+      "richLinks": 2,
+      "codeBlocks": 1
+    },
+    "maxAgeHours": 0,
+    "livecrawlTimeout": 12000,
+    "subpages": 1,
+    "subpageTarget": [
+      "methods",
+      "data"
+    ]
+  },
+  "outputSchema": {
+    "type": "object",
+    "description": "Study overview",
+    "properties": {
+      "finding": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "finding"
+    ],
+    "additionalProperties": false
+  },
+  "stream": false
+}

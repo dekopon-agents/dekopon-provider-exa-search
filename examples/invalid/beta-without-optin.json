@@ -1,0 +1,11 @@
+{
+  "native": {
+    "query": "synthetic shared highlight budget",
+    "contents": {
+      "highlights": {
+        "dynamic": true,
+        "verbosity": "medium"
+      }
+    }
+  }
+}
