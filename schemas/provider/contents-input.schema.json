@@ -31,10 +31,19 @@
                       },
                       "required": [
                         "dynamic"
-                      ]
+                      ],
+                      "type": "object"
                     },
                     "then": {
                       "not": {
+                        "type": "object",
+                        "properties": {
+                          "maxCharacters": {
+                            "not": {
+                              "type": "null"
+                            }
+                          }
+                        },
                         "required": [
                           "maxCharacters"
                         ]
@@ -43,6 +52,14 @@
                   },
                   {
                     "if": {
+                      "type": "object",
+                      "properties": {
+                        "verbosity": {
+                          "not": {
+                            "type": "null"
+                          }
+                        }
+                      },
                       "required": [
                         "verbosity"
                       ]
@@ -51,11 +68,27 @@
                       "not": {
                         "anyOf": [
                           {
+                            "type": "object",
+                            "properties": {
+                              "maxCharacters": {
+                                "not": {
+                                  "type": "null"
+                                }
+                              }
+                            },
                             "required": [
                               "maxCharacters"
                             ]
                           },
                           {
+                            "type": "object",
+                            "properties": {
+                              "numSentences": {
+                                "not": {
+                                  "type": "null"
+                                }
+                              }
+                            },
                             "required": [
                               "numSentences"
                             ]
@@ -165,16 +198,33 @@
       "if": {
         "properties": {
           "native": {
+            "type": "object",
             "properties": {
               "highlights": {
                 "type": "object",
                 "anyOf": [
                   {
+                    "type": "object",
+                    "properties": {
+                      "dynamic": {
+                        "not": {
+                          "type": "null"
+                        }
+                      }
+                    },
                     "required": [
                       "dynamic"
                     ]
                   },
                   {
+                    "type": "object",
+                    "properties": {
+                      "verbosity": {
+                        "not": {
+                          "type": "null"
+                        }
+                      }
+                    },
                     "required": [
                       "verbosity"
                     ]
@@ -189,7 +239,8 @@
         },
         "required": [
           "native"
-        ]
+        ],
+        "type": "object"
       },
       "then": {
         "properties": {

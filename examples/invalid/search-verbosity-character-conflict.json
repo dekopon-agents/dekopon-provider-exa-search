@@ -1,0 +1,12 @@
+{
+  "native": {
+    "query": "synthetic",
+    "contents": {
+      "highlights": {
+        "verbosity": "medium",
+        "maxCharacters": 100
+      }
+    }
+  },
+  "betaDynamicHighlights": true
+}

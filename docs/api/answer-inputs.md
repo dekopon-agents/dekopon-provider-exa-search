@@ -8,7 +8,7 @@ Types include explicit null where the OpenAPI permits it. Omission is distinct f
 |---|---|---|---|---|---|
 | `query` | string | yes (variant) | unspecified | minLength=1 | Natural-language information need; retrieval query, not a URL or SQL expression. **explicitly deferred**. |
 | `stream` | boolean | no | false | no additional bound documented | SSE response selection; search requires outputSchema to actually stream. Initial provider rejects true because HTTP responses are buffered. **explicitly deferred**. |
-| `text` | boolean | no | false | no additional bound documented | Boolean enables/disables extracted page text; object chooses rendering/length. Never the original complete webpage. **explicitly deferred**. |
+| `text` | boolean | no | false | no additional bound documented | Boolean enables/disables citation page text using vendor default settings; no rendering/length object form is documented. Never the original complete webpage. **explicitly deferred**. |
 | `model` | string | no | "exa" | enum=["exa", "exa-pro", "exa-research", "exa-fast"] | Answer generator: exa default; exa-pro, exa-research, exa-fast named variants. Exact capability/price/latency differences unverified. **explicitly deferred**. |
 | `systemPrompt` | string | no | unspecified | no additional bound documented | Guidance for generated output; in deep modes also search planning. Not an independent ranking weight API. **explicitly deferred**. |
 | `userLocation` | string / null | no | unspecified | no additional bound documented | Two-letter ISO country hint for user geography, not a verified person/company location filter. **explicitly deferred**. |

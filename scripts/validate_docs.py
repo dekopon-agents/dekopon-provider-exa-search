@@ -37,6 +37,13 @@ def heading_ids(text):
 
 
 def main():
+    format_checker = FormatChecker()
+    missing_formats = {"date-time", "uri"} - format_checker.checkers.keys()
+    if missing_formats:
+        raise RuntimeError(
+            "Required format checkers unavailable: " + ", ".join(sorted(missing_formats))
+            + "; install requirements-dev.txt before running validation."
+        )
     documents = {p: json.loads(p.read_text()) for p in public_files(".json")}
     schemas = {p: d for p, d in documents.items() if "schemas" in p.relative_to(ROOT).parts}
     registry = Registry().with_resources(
@@ -67,7 +74,7 @@ def main():
         path = ROOT / fixture["file"]
         schema_path = ROOT / fixture["schema"]
         validator = Draft202012Validator(
-            {"$ref": schema_path.as_uri()}, registry=registry, format_checker=FormatChecker()
+            {"$ref": schema_path.as_uri()}, registry=registry, format_checker=format_checker
         )
         errors = list(validator.iter_errors(documents[path]))
         if fixture["valid"]:
@@ -110,6 +117,9 @@ def main():
             pointer(documents[ROOT / entry["schema"]], ref)
         counts[entry["endpoint"]] += 1
     shapes = documents[ROOT / "schemas/upstream/documented-shapes.json"]
+    search_input = documents[ROOT / "schemas/provider/search-input.schema.json"]
+    contents_policy = search_input["properties"]["native"]["allOf"][1]["properties"]["contents"]
+    assert set(contents_policy["propertyNames"]["enum"]) == set(shapes["$defs"]["ContentsOptions"]["properties"]), "contents allowlist must preserve every documented native key"
     def named_paths(node, prefix="", seen=()):
         if "$ref" in node:
             ref = node["$ref"]
@@ -132,6 +142,7 @@ def main():
         actual = {path for op, location, path in identities if op == endpoint and location == "body"}
         guide_only = {"useAutoprompt"} if endpoint == "search" else set()
         assert actual == expected | guide_only, f"incomplete named-property coverage: {endpoint}: {expected ^ actual}"
+    print("PASS: required date-time and uri format checkers available")
     print(f"PASS: {len(documents)} JSON files; {len(schemas)} well-formed schemas; {fenced_count} JSON fences")
     print(f"PASS: {valid} valid fixtures; {invalid} invalid/conflicting fixtures rejected; {link_count} local links")
     print("PASS: coverage references and unique parameter paths: " + ", ".join(f"{k}={v}" for k, v in sorted(counts.items())))

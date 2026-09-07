@@ -153,5 +153,100 @@
     "file": "examples/search-entities-response.json",
     "schema": "schemas/upstream/search-response.schema.json",
     "valid": true
+  },
+  {
+    "file": "examples/invalid/search-start-date-format.json",
+    "schema": "schemas/upstream/search-request.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/search-published-date-format.json",
+    "schema": "schemas/upstream/search-response.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/search-url-format.json",
+    "schema": "schemas/upstream/search-response.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/search-contents-unknown-field.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/provider-search-null-contents.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-null-category-filters.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-null-highlights.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-null-beta-options.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-dynamic-null-characters.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-search-verbosity-null-characters.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/invalid/search-false-dynamic-without-optin.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/search-verbosity-character-conflict.json",
+    "schema": "schemas/provider/search-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/provider-contents-null-highlights.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-contents-null-beta-options.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-contents-dynamic-null-characters.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/provider-contents-verbosity-null-characters.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": true
+  },
+  {
+    "file": "examples/invalid/contents-false-dynamic-without-optin.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/contents-verbosity-character-conflict.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": false
+  },
+  {
+    "file": "examples/invalid/contents-dynamic-character-conflict.json",
+    "schema": "schemas/provider/contents-input.schema.json",
+    "valid": false
   }
 ]

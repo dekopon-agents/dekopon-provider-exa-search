@@ -1,6 +1,6 @@
 # ContextResponse: documented output fields
 
-Structural inventory adapted from official sources. [Output semantics](outputs.md) explain provenance, confidence, optionality and conflicts. Nested company/person/publication alternatives share a path; consult the [wire definitions](../../schemas/upstream/documented-shapes.json) for variant-specific required lists. Schema-required does not make an absent upstream value known.
+Prose-derived documented subset from the [Context reference](https://exa.ai/docs/reference/context.md), not an official OpenAPI schema. [Output semantics](outputs.md) explain provenance, confidence, optionality and conflicts; consult the [wire definitions](../../schemas/upstream/documented-shapes.json) for the local subset. Only `costDollars.total` and `costDollars.search.neural` are established by the Context examples. Other breakdown fields remain unknown, with open schema objects allowing bounded raw preservation rather than asserting a shared endpoint contract. Schema-required does not make an absent upstream value known.
 
 | Path | Type | Required in containing variant | Bounds / enum |
 |---|---|---|---|
@@ -9,14 +9,8 @@ Structural inventory adapted from official sources. [Output semantics](outputs.m
 | `response` | string | yes in at least one variant | no additional bound documented |
 | `resultsCount` | integer | no | no additional bound documented |
 | `costDollars` | object | no | no additional bound documented |
-| `costDollars.total` | number | no | format="float" |
+| `costDollars.total` | number | no | no additional bound documented |
 | `costDollars.search` | object | no | no additional bound documented |
-| `costDollars.search.neural` | number | no | format="float" |
-| `costDollars.search.keyword` | number | no | format="float" |
-| `costDollars.summary` | number | no | format="float" |
-| `costDollars.contents` | object | no | no additional bound documented |
-| `costDollars.contents.text` | number | no | format="float" |
-| `costDollars.contents.highlights` | number | no | format="float" |
-| `costDollars.contents.summary` | number | no | format="float" |
+| `costDollars.search.neural` | number | no | no additional bound documented |
 | `searchTime` | number | no | no additional bound documented |
 | `outputTokens` | integer | no | no additional bound documented |

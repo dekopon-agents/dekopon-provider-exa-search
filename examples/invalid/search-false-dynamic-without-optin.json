@@ -1,0 +1,10 @@
+{
+  "native": {
+    "query": "synthetic",
+    "contents": {
+      "highlights": {
+        "dynamic": false
+      }
+    }
+  }
+}
