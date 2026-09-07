@@ -1,0 +1,76 @@
+{
+  "requestId": "synthetic-search-001",
+  "results": [
+    {
+      "title": "Synthetic orchard sensor trial",
+      "url": "https://example.org/research/orchard",
+      "id": "https://example.org/research/orchard",
+      "publishedDate": "2026-02-03T00:00:00Z",
+      "author": null,
+      "image": "https://example.org/orchard.png",
+      "favicon": "https://example.org/favicon.ico",
+      "text": "Synthetic example: sensors guided irrigation in an illustrative orchard trial.",
+      "highlights": [
+        "Synthetic example: sensors guided irrigation."
+      ],
+      "highlightScores": [
+        0.72
+      ],
+      "summary": "{\"finding\":\"Illustrative trial only; not observed evidence.\"}",
+      "subpages": [
+        {
+          "title": "Synthetic methods",
+          "url": "https://example.org/research/orchard/methods"
+        }
+      ],
+      "extras": {
+        "links": [
+          "https://example.org/data"
+        ],
+        "imageLinks": [
+          "https://example.org/orchard.png"
+        ],
+        "richImageLinks": [
+          {
+            "url": "https://example.org/orchard.png",
+            "alt": "Illustrative orchard"
+          }
+        ],
+        "richLinks": [
+          {
+            "url": "https://example.org/data",
+            "anchor": "Synthetic data"
+          }
+        ],
+        "codeBlocks": [
+          {
+            "text": "sample_count = 3",
+            "source": "https://example.org/data"
+          }
+        ]
+      }
+    }
+  ],
+  "resolvedSearchType": "",
+  "searchTime": 420.5,
+  "costDollars": {
+    "total": 0.013
+  },
+  "output": {
+    "content": {
+      "finding": "Illustrative sensor trial; no real evidence asserted."
+    },
+    "grounding": [
+      {
+        "field": "finding",
+        "citations": [
+          {
+            "url": "https://example.org/research/orchard",
+            "title": "Synthetic orchard sensor trial"
+          }
+        ],
+        "confidence": "low"
+      }
+    ]
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "operation": "search",
+  "mode": "relevant",
+  "data": {
+    "results": [
+      {
+        "title": "Synthetic orchard sensor trial",
+        "url": "https://example.org/research/orchard",
+        "highlights": [
+          "Synthetic example: sensors guided irrigation."
+        ]
+      }
+    ]
+  },
+  "meta": {
+    "requestId": "synthetic-search-002",
+    "truncated": false,
+    "truncationReasons": [],
+    "returnedResults": 1,
+    "upstreamResultCount": 1,
+    "costDollars": {
+      "total": 0.007
+    },
+    "warnings": []
+  }
+}

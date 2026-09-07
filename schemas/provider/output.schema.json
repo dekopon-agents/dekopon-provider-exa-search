@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Proposed envelope documented-shape subset: output byte accounting, field projection and upstream raw shape linkage require implementation tests. Not a full output validator.",
+  "type": "object",
+  "properties": {
+    "operation": {
+      "enum": [
+        "search",
+        "contents",
+        "context"
+      ]
+    },
+    "mode": {
+      "enum": [
+        "links",
+        "brief",
+        "relevant",
+        "page-text",
+        "raw"
+      ]
+    },
+    "data": {
+      "type": "object"
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "requestId": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "truncationReasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "returnedResults": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "upstreamResultCount": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "costDollars": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "truncated",
+        "truncationReasons",
+        "warnings"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "operation",
+    "mode",
+    "data",
+    "meta"
+  ],
+  "additionalProperties": false
+}

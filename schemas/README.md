@@ -1,0 +1,11 @@
+# Schema boundaries
+
+All schemas use JSON Schema Draft 2020-12 for local validation. They are **documentation artifacts, not installed provider runtime validation**. Caller-supplied upstream generation schemas may use other dialects (Contents/Answer guides name Draft 7).
+
+- `upstream/documented-shapes.json`: structural adaptation of the 2026-09-07 official embedded OpenAPI schemas for Search, Contents and Answer; vendor descriptions/examples removed. Keeps named request/response properties, types, enums, nullability and bounds. Includes SSE chunk shapes for documentation, not implementation. Context request/response are explicitly prose-derived **subsets**, not an official OpenAPI definition.
+- `upstream/*-request.schema.json` / `*-response.schema.json`: local references into those definitions. Raw request shapes do not encode all vendor cross-field/plan restrictions. Raw response shapes may be narrower than live responses or guide examples; see [conflicts](../docs/sources.md). These are not an exhaustive API validator.
+- `provider/*-input.schema.json`: proposed typed envelopes separating `native` from `output`, with representative cross-field checks and rejection of deprecated/streaming/operator-only model options. Operator profile injection happens later, outside model inputs. Source limits are separate from policy ceilings.
+- `provider/output.schema.json`: proposed output-envelope **subset**. Deliberately does not claim to validate every projected/raw data field, exact serialized bytes, preserved grounding or future runtime truncation algorithm.
+- `headers.schema.json`: fixed non-auth headers only. Bearer credentials are deliberately not modeled as caller input.
+
+`additionalProperties`/open JSON maps in vendor schemas are not permission to offer arbitrary upstream options. `summary.schema` and `outputSchema.properties` contain caller-defined property names/schema keywords; there is no finite list of application-chosen keys. [Coverage](../docs/coverage.json) counts each vendor-named path once and retains every variant schema pointer. Schema well-formedness is tested using pinned jsonschema, not a handwritten interpreter. [Validation limitations](../docs/validation.md) identify unencoded conditions.

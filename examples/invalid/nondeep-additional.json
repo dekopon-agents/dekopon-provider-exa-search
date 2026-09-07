@@ -1,0 +1,9 @@
+{
+  "native": {
+    "query": "x",
+    "type": "auto",
+    "additionalQueries": [
+      "y"
+    ]
+  }
+}

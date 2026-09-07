@@ -1,0 +1,89 @@
+{
+  "requestId": "synthetic-entities-001",
+  "results": [
+    {
+      "title": "Synthetic company example",
+      "url": "https://example.org/company",
+      "entities": [
+        {
+          "id": "synthetic-company-001",
+          "type": "company",
+          "version": 1,
+          "properties": {
+            "name": "Synthetic Orchard Systems",
+            "foundedYear": 2021,
+            "description": "Illustrative sensor organization, not a real company.",
+            "workforce": {
+              "total": 12
+            },
+            "headquarters": null,
+            "financials": null,
+            "webTraffic": null,
+            "research": null
+          }
+        }
+      ]
+    },
+    {
+      "title": "Synthetic person example",
+      "url": "https://example.org/person",
+      "entities": [
+        {
+          "id": "synthetic-person-001",
+          "type": "person",
+          "version": 1,
+          "properties": {
+            "name": "Synthetic Profile",
+            "firstName": "Synthetic",
+            "lastName": "Profile",
+            "location": "Illustrative region",
+            "workHistory": [
+              {
+                "title": "Illustrative engineer",
+                "location": null,
+                "dates": {
+                  "from": "2025-01-01",
+                  "to": null
+                },
+                "company": {
+                  "id": "synthetic-company-001",
+                  "name": "Synthetic Orchard Systems"
+                }
+              }
+            ],
+            "educationHistory": [],
+            "research": null
+          }
+        }
+      ]
+    },
+    {
+      "title": "Synthetic publication example",
+      "url": "https://example.org/publication",
+      "entities": [
+        {
+          "id": "synthetic-publication-001",
+          "type": "publication",
+          "version": 1,
+          "properties": {
+            "title": "Synthetic sensor study",
+            "year": 2026,
+            "date": "2026-02-03",
+            "type": "article",
+            "language": "en",
+            "citationCount": 0,
+            "authors": [
+              {
+                "name": "Synthetic Profile",
+                "id": "synthetic-person-001"
+              }
+            ],
+            "referenceCount": 0,
+            "abstract": "Illustrative study only.",
+            "doi": null
+          }
+        }
+      ]
+    }
+  ]
+}

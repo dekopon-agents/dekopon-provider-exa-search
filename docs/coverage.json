@@ -1,0 +1,1580 @@
+{
+  "snapshot": "2026-09-07",
+  "scope": "3 initial synchronous retrieval endpoints; answer adjacent/deferred, included separately. Paths count named properties once, with all variant schema pointers. Auth schemes documented separately. Open schema maps have arbitrary user-defined keys, not undiscovered vendor controls.",
+  "endpoints": [
+    {
+      "id": "search",
+      "method": "POST",
+      "url": "https://api.exa.ai/search",
+      "docs": "docs/api/search.md",
+      "providerStatus": "supported"
+    },
+    {
+      "id": "contents",
+      "method": "POST",
+      "url": "https://api.exa.ai/contents",
+      "docs": "docs/api/contents.md",
+      "providerStatus": "supported"
+    },
+    {
+      "id": "context",
+      "method": "POST",
+      "url": "https://api.exa.ai/context",
+      "docs": "docs/api/context.md",
+      "providerStatus": "supported"
+    },
+    {
+      "id": "answer",
+      "method": "POST",
+      "url": "https://api.exa.ai/answer",
+      "docs": "docs/api/answer.md",
+      "providerStatus": "explicitly deferred"
+    }
+  ],
+  "parameters": [
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "includeDomains",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/includeDomains"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.includeDomains"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "excludeDomains",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/excludeDomains"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.excludeDomains"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "startCrawlDate",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/startCrawlDate"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.startCrawlDate"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "endCrawlDate",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/endCrawlDate"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.endCrawlDate"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "startPublishedDate",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/startPublishedDate"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.startPublishedDate"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "endPublishedDate",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/endPublishedDate"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.endPublishedDate"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "numResults",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/numResults"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.numResults"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "context",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/context"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.context"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "context.maxCharacters",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/context/anyOf/0/oneOf/1/properties/maxCharacters"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.context.maxCharacters"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "moderation",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/moderation"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.moderation"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/contents"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.text",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.text"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.text.maxCharacters",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text/anyOf/0/oneOf/1/properties/maxCharacters"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.text.maxCharacters"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.text.includeHtmlTags",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text/anyOf/0/oneOf/1/properties/includeHtmlTags"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.text.includeHtmlTags"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.text.verbosity",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text/anyOf/0/oneOf/1/properties/verbosity"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.text.verbosity"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.text.includeSections",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text/anyOf/0/oneOf/1/properties/includeSections"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.text.includeSections"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.text.excludeSections",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text/anyOf/0/oneOf/1/properties/excludeSections"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.text.excludeSections"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.highlights",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.highlights"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.highlights.query",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/query"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.highlights.query"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.highlights.verbosity",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/verbosity"
+      ],
+      "providerStatus": "beta",
+      "behavior": "Opt-in feature plus operator allowBetaDynamicHighlights; fixed Exa-Beta value, validate conflicts.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.highlights.verbosity"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.highlights.dynamic",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/dynamic"
+      ],
+      "providerStatus": "beta",
+      "behavior": "Opt-in feature plus operator allowBetaDynamicHighlights; fixed Exa-Beta value, validate conflicts.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.highlights.dynamic"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.highlights.maxCharacters",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/maxCharacters"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.highlights.maxCharacters"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.highlights.numSentences",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/numSentences"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.highlights.numSentences"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.highlights.highlightsPerUrl",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/highlightsPerUrl"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.highlights.highlightsPerUrl"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.summary",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/summary"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.summary"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.summary.query",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/summary/anyOf/0/properties/query"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.summary.query"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.summary.schema",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/summary/anyOf/0/properties/schema"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.summary.schema"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.extras",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.extras"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.extras.links",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras/anyOf/0/properties/links"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.extras.links"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.extras.imageLinks",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras/anyOf/0/properties/imageLinks"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.extras.imageLinks"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.extras.richImageLinks",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras/anyOf/0/properties/richImageLinks"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.extras.richImageLinks"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.extras.richLinks",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras/anyOf/0/properties/richLinks"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.extras.richLinks"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.extras.codeBlocks",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras/anyOf/0/properties/codeBlocks"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.extras.codeBlocks"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.context",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/context"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.context"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.context.maxCharacters",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/context/anyOf/0/oneOf/1/properties/maxCharacters"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.context.maxCharacters"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.livecrawl",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/livecrawl"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.livecrawl"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.livecrawlTimeout",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/livecrawlTimeout"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.livecrawlTimeout"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.maxAgeHours",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/maxAgeHours"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.maxAgeHours"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.subpages",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/subpages"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.subpages"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "contents.subpageTarget",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/subpageTarget"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.contents.subpageTarget"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "query",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/query"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.query"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "additionalQueries",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/additionalQueries"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.additionalQueries"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "type",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/type"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.type"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "category",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/category"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.category"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "userLocation",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/userLocation"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.userLocation"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "compliance",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/compliance"
+      ],
+      "providerStatus": "operator-only",
+      "behavior": "Vendor-enabled enterprise access; exact eligible cache-only profile enforced before dispatch.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.compliance"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "outputSchema",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/outputSchema"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.outputSchema"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "outputSchema.type",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/outputSchema/anyOf/0/oneOf/0/properties/type",
+        "/$defs/SearchRequest/properties/outputSchema/anyOf/0/oneOf/1/properties/type"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.outputSchema.type"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "outputSchema.description",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/outputSchema/anyOf/0/oneOf/0/properties/description",
+        "/$defs/SearchRequest/properties/outputSchema/anyOf/0/oneOf/1/properties/description"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.outputSchema.description"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "outputSchema.properties",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/outputSchema/anyOf/0/oneOf/1/properties/properties"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.outputSchema.properties"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "outputSchema.required",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/outputSchema/anyOf/0/oneOf/1/properties/required"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.outputSchema.required"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "outputSchema.additionalProperties",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/outputSchema/anyOf/0/oneOf/1/properties/additionalProperties"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.outputSchema.additionalProperties"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "systemPrompt",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/systemPrompt"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.systemPrompt"
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "stream",
+      "docs": "docs/api/search-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/stream"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "true requires SSE consumption unavailable in current buffered provider plan; false/null may be omitted.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.stream"
+    },
+    {
+      "endpoint": "search",
+      "location": "header",
+      "path": "Content-Type",
+      "docs": "docs/api/transport.md",
+      "schema": "schemas/headers.schema.json",
+      "schemaPointers": [
+        "/properties/Content-Type"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Fixed value application/json; never arbitrary model-supplied headers.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "adapter fixed Content-Type"
+    },
+    {
+      "endpoint": "search",
+      "location": "header",
+      "path": "Exa-Beta",
+      "docs": "docs/api/transport.md",
+      "schema": "schemas/headers.schema.json",
+      "schemaPointers": [
+        "/properties/Exa-Beta"
+      ],
+      "providerStatus": "beta",
+      "behavior": "Fixed value dynamic-highlights-2026-08-28; never arbitrary model-supplied headers.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "betaDynamicHighlights (adapter emits fixed header)"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "ids",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsRequest/allOf/0/properties/ids"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.ids"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "urls",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsRequest/allOf/0/properties/urls"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.urls"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "compliance",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsRequest/allOf/0/properties/compliance"
+      ],
+      "providerStatus": "operator-only",
+      "behavior": "Vendor-enabled enterprise access; exact eligible cache-only profile enforced before dispatch.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.compliance"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "text",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.text"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "text.maxCharacters",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text/anyOf/0/oneOf/1/properties/maxCharacters"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.text.maxCharacters"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "text.includeHtmlTags",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text/anyOf/0/oneOf/1/properties/includeHtmlTags"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.text.includeHtmlTags"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "text.verbosity",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text/anyOf/0/oneOf/1/properties/verbosity"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.text.verbosity"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "text.includeSections",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text/anyOf/0/oneOf/1/properties/includeSections"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.text.includeSections"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "text.excludeSections",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/text/anyOf/0/oneOf/1/properties/excludeSections"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.text.excludeSections"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "highlights",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.highlights"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "highlights.query",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/query"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.highlights.query"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "highlights.verbosity",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/verbosity"
+      ],
+      "providerStatus": "beta",
+      "behavior": "Opt-in feature plus operator allowBetaDynamicHighlights; fixed Exa-Beta value, validate conflicts.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.highlights.verbosity"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "highlights.dynamic",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/dynamic"
+      ],
+      "providerStatus": "beta",
+      "behavior": "Opt-in feature plus operator allowBetaDynamicHighlights; fixed Exa-Beta value, validate conflicts.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.highlights.dynamic"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "highlights.maxCharacters",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/maxCharacters"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.highlights.maxCharacters"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "highlights.numSentences",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/numSentences"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.highlights.numSentences"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "highlights.highlightsPerUrl",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/highlights/anyOf/0/oneOf/1/properties/highlightsPerUrl"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.highlights.highlightsPerUrl"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "summary",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/summary"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.summary"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "summary.query",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/summary/anyOf/0/properties/query"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.summary.query"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "summary.schema",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/summary/anyOf/0/properties/schema"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.summary.schema"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "extras",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.extras"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "extras.links",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras/anyOf/0/properties/links"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.extras.links"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "extras.imageLinks",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras/anyOf/0/properties/imageLinks"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.extras.imageLinks"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "extras.richImageLinks",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras/anyOf/0/properties/richImageLinks"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.extras.richImageLinks"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "extras.richLinks",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras/anyOf/0/properties/richLinks"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.extras.richLinks"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "extras.codeBlocks",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/extras/anyOf/0/properties/codeBlocks"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.extras.codeBlocks"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "context",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/context"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.context"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "context.maxCharacters",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/context/anyOf/0/oneOf/1/properties/maxCharacters"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.context.maxCharacters"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "livecrawl",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/livecrawl"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Document for migration; reject in planned provider, do not silently claim effect.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.livecrawl"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "livecrawlTimeout",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/livecrawlTimeout"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.livecrawlTimeout"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "maxAgeHours",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/maxAgeHours"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.maxAgeHours"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "subpages",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/subpages"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.subpages"
+    },
+    {
+      "endpoint": "contents",
+      "location": "body",
+      "path": "subpageTarget",
+      "docs": "docs/api/contents-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/subpageTarget"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "native.subpageTarget"
+    },
+    {
+      "endpoint": "contents",
+      "location": "header",
+      "path": "Content-Type",
+      "docs": "docs/api/transport.md",
+      "schema": "schemas/headers.schema.json",
+      "schemaPointers": [
+        "/properties/Content-Type"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Fixed value application/json; never arbitrary model-supplied headers.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "adapter fixed Content-Type"
+    },
+    {
+      "endpoint": "contents",
+      "location": "header",
+      "path": "Exa-Beta",
+      "docs": "docs/api/transport.md",
+      "schema": "schemas/headers.schema.json",
+      "schemaPointers": [
+        "/properties/Exa-Beta"
+      ],
+      "providerStatus": "beta",
+      "behavior": "Fixed value dynamic-highlights-2026-08-28; never arbitrary model-supplied headers.",
+      "providerSchema": "schemas/provider/contents-input.schema.json",
+      "providerPath": "betaDynamicHighlights (adapter emits fixed header)"
+    },
+    {
+      "endpoint": "context",
+      "location": "body",
+      "path": "query",
+      "docs": "docs/api/context-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContextRequest/properties/query"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/context-input.schema.json",
+      "providerPath": "native.query"
+    },
+    {
+      "endpoint": "context",
+      "location": "body",
+      "path": "tokensNum",
+      "docs": "docs/api/context-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContextRequest/properties/tokensNum"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Typed native option; no arbitrary request pass-through.",
+      "providerSchema": "schemas/provider/context-input.schema.json",
+      "providerPath": "native.tokensNum"
+    },
+    {
+      "endpoint": "context",
+      "location": "header",
+      "path": "Content-Type",
+      "docs": "docs/api/transport.md",
+      "schema": "schemas/headers.schema.json",
+      "schemaPointers": [
+        "/properties/Content-Type"
+      ],
+      "providerStatus": "supported",
+      "behavior": "Fixed value application/json; never arbitrary model-supplied headers.",
+      "providerSchema": "schemas/provider/context-input.schema.json",
+      "providerPath": "adapter fixed Content-Type"
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "query",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/query"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "stream",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/stream"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "text",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/text"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "model",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/model"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "systemPrompt",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/systemPrompt"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "userLocation",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/userLocation"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "outputSchema",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/outputSchema"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "outputSchema.type",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/outputSchema/properties/type"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "outputSchema.properties",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/outputSchema/properties/properties"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "outputSchema.required",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/outputSchema/properties/required"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "outputSchema.description",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/outputSchema/properties/description"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "body",
+      "path": "outputSchema.additionalProperties",
+      "docs": "docs/api/answer-inputs.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/AnswerRequest/properties/outputSchema/properties/additionalProperties"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Adjacent generated synthesis family, not an initial search/retrieval capability."
+    },
+    {
+      "endpoint": "answer",
+      "location": "header",
+      "path": "Content-Type",
+      "docs": "docs/api/transport.md",
+      "schema": "schemas/headers.schema.json",
+      "schemaPointers": [
+        "/properties/Content-Type"
+      ],
+      "providerStatus": "explicitly deferred",
+      "behavior": "Fixed value application/json; never arbitrary model-supplied headers."
+    },
+    {
+      "endpoint": "search",
+      "location": "body",
+      "path": "useAutoprompt",
+      "docs": "docs/api/search.md",
+      "schema": "schemas/provider/search-input.schema.json",
+      "schemaPointers": [
+        "/properties/native"
+      ],
+      "providerStatus": "deprecated/ignored",
+      "behavior": "Coding-agent guide says deprecated/no effect; absent from current OpenAPI; reject unknown input.",
+      "providerSchema": "schemas/provider/search-input.schema.json",
+      "providerPath": "native.useAutoprompt"
+    }
+  ],
+  "documentedConflictingShapes": [
+    {
+      "endpoint": "search",
+      "path": "contents.summary",
+      "shape": "boolean",
+      "providerStatus": "explicitly deferred",
+      "reason": "Guides allow boolean but OpenAPI only object/null; use object form.",
+      "docs": "docs/api/contents.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/summary"
+      ]
+    },
+    {
+      "endpoint": "contents",
+      "path": "summary",
+      "shape": "boolean",
+      "providerStatus": "explicitly deferred",
+      "reason": "Guides allow boolean but OpenAPI only object/null; use object form.",
+      "docs": "docs/api/contents.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/ContentsOptions/properties/summary"
+      ]
+    },
+    {
+      "endpoint": "search",
+      "path": "category",
+      "shape": "non-enumerated string hint",
+      "providerStatus": "explicitly deferred",
+      "reason": "OpenAPI prose permits custom hints, enum permits only six values; expose six and await clarification.",
+      "docs": "docs/api/search.md",
+      "schema": "schemas/upstream/documented-shapes.json",
+      "schemaPointers": [
+        "/$defs/SearchRequest/properties/category"
+      ]
+    }
+  ],
+  "openUserDefinedMaps": [
+    {
+      "endpoint": "search",
+      "path": "contents.summary.schema",
+      "behavior": "Preserve caller-defined JSON Schema names/keywords as JSON values inside this documented field only; semantic subset and complexity need explicit future validation."
+    },
+    {
+      "endpoint": "search",
+      "path": "outputSchema.properties",
+      "behavior": "Preserve caller-defined JSON Schema names/keywords as JSON values inside this documented field only; semantic subset and complexity need explicit future validation."
+    },
+    {
+      "endpoint": "search",
+      "path": "outputSchema additional JSON-valued keywords",
+      "behavior": "Preserve caller-defined JSON Schema names/keywords as JSON values inside this documented field only; semantic subset and complexity need explicit future validation."
+    },
+    {
+      "endpoint": "contents",
+      "path": "summary.schema",
+      "behavior": "Preserve caller-defined JSON Schema names/keywords as JSON values inside this documented field only; semantic subset and complexity need explicit future validation."
+    },
+    {
+      "endpoint": "answer",
+      "path": "outputSchema.properties",
+      "behavior": "Preserve caller-defined JSON Schema names/keywords as JSON values inside this documented field only; semantic subset and complexity need explicit future validation."
+    },
+    {
+      "endpoint": "answer",
+      "path": "outputSchema additional JSON-valued keywords",
+      "behavior": "Preserve caller-defined JSON Schema names/keywords as JSON values inside this documented field only; semantic subset and complexity need explicit future validation."
+    }
+  ]
+}

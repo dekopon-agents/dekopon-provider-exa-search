@@ -1,0 +1,8 @@
+{
+  "native": {
+    "urls": [
+      "https://example.org"
+    ],
+    "livecrawl": "always"
+  }
+}

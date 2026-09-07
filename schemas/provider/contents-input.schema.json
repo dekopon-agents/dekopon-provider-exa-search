@@ -1,0 +1,206 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Proposed contents provider input (not implemented)",
+  "type": "object",
+  "properties": {
+    "native": {
+      "allOf": [
+        {
+          "$ref": "../upstream/contents-request.schema.json"
+        },
+        {
+          "properties": {
+            "context": false,
+            "livecrawl": false,
+            "highlights": {
+              "if": {
+                "type": "object"
+              },
+              "then": {
+                "properties": {
+                  "numSentences": false,
+                  "highlightsPerUrl": false
+                },
+                "allOf": [
+                  {
+                    "if": {
+                      "properties": {
+                        "dynamic": {
+                          "const": true
+                        }
+                      },
+                      "required": [
+                        "dynamic"
+                      ]
+                    },
+                    "then": {
+                      "not": {
+                        "required": [
+                          "maxCharacters"
+                        ]
+                      }
+                    }
+                  },
+                  {
+                    "if": {
+                      "required": [
+                        "verbosity"
+                      ]
+                    },
+                    "then": {
+                      "not": {
+                        "anyOf": [
+                          {
+                            "required": [
+                              "maxCharacters"
+                            ]
+                          },
+                          {
+                            "required": [
+                              "numSentences"
+                            ]
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ]
+              },
+              "propertyNames": {
+                "enum": [
+                  "query",
+                  "verbosity",
+                  "dynamic",
+                  "maxCharacters",
+                  "numSentences",
+                  "highlightsPerUrl"
+                ]
+              }
+            },
+            "text": {
+              "propertyNames": {
+                "enum": [
+                  "maxCharacters",
+                  "includeHtmlTags",
+                  "verbosity",
+                  "includeSections",
+                  "excludeSections"
+                ]
+              }
+            },
+            "summary": {
+              "propertyNames": {
+                "enum": [
+                  "query",
+                  "schema"
+                ]
+              }
+            },
+            "extras": {
+              "propertyNames": {
+                "enum": [
+                  "links",
+                  "imageLinks",
+                  "richImageLinks",
+                  "richLinks",
+                  "codeBlocks"
+                ]
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "compliance": false
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "enum": [
+            "links",
+            "brief",
+            "relevant",
+            "page-text",
+            "raw"
+          ],
+          "default": "brief"
+        },
+        "maxResults": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 10
+        },
+        "maxBytes": {
+          "type": "integer",
+          "minimum": 1024,
+          "maximum": 262144,
+          "default": 32768
+        },
+        "maxCharactersPerResult": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10000,
+          "default": 2000
+        }
+      },
+      "additionalProperties": false
+    },
+    "betaDynamicHighlights": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "native"
+  ],
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "native": {
+            "properties": {
+              "highlights": {
+                "type": "object",
+                "anyOf": [
+                  {
+                    "required": [
+                      "dynamic"
+                    ]
+                  },
+                  {
+                    "required": [
+                      "verbosity"
+                    ]
+                  }
+                ]
+              }
+            },
+            "required": [
+              "highlights"
+            ]
+          }
+        },
+        "required": [
+          "native"
+        ]
+      },
+      "then": {
+        "properties": {
+          "betaDynamicHighlights": {
+            "const": true
+          }
+        },
+        "required": [
+          "betaDynamicHighlights"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "Content-Type": {
+      "const": "application/json"
+    },
+    "Exa-Beta": {
+      "const": "dynamic-highlights-2026-08-28"
+    }
+  },
+  "required": [
+    "Content-Type"
+  ],
+  "additionalProperties": false
+}
