@@ -174,6 +174,20 @@ fn validate_options(options: &ContentsOptions) -> Result<bool, ProviderError> {
     Ok(beta)
 }
 
+/// Serde's Option accepts explicit null for a present field; the OpenAPI output-schema
+/// roots allow omission but do not allow null for their declared members.
+fn output_schema_fields_valid(schema: &Value) -> bool {
+    [
+        "type",
+        "description",
+        "properties",
+        "required",
+        "additionalProperties",
+    ]
+    .iter()
+    .all(|field| schema.get(*field).is_none_or(|value| !value.is_null()))
+}
+
 /// Returns whether the request requires Exa's fixed dynamic-highlights beta header.
 fn validate(id: &str, input: &Value) -> Result<bool, ProviderError> {
     if !input.is_object() {
@@ -210,6 +224,9 @@ fn validate(id: &str, input: &Value) -> Result<bool, ProviderError> {
                     .as_deref()
                     .zip(request.end_published_date.as_deref())
                     .is_some_and(|(start, end)| date_time(start) > date_time(end))
+                || input
+                    .get("outputSchema")
+                    .is_some_and(|schema| !schema.is_null() && !output_schema_fields_valid(schema))
                 || request.category.as_deref().is_some_and(|v| !nonempty(v))
                 || request.additional_queries.is_some()
                     && !matches!(
@@ -261,6 +278,9 @@ fn validate(id: &str, input: &Value) -> Result<bool, ProviderError> {
             if !nonempty(&request.query)
                 || request.stream.is_some_and(|v| v)
                 || !country(request.user_location.as_deref())
+                || input.get("outputSchema").is_some_and(|schema| {
+                    !schema.is_object() || !output_schema_fields_valid(schema)
+                })
             {
                 return Err(invalid());
             }

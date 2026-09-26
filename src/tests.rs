@@ -82,7 +82,7 @@ fn invalid_input_and_unknown_capabilities_never_send() {
         (ids::SEARCH, json!({"query":"q","additionalQueries":["a"]})),
         (
             ids::SEARCH,
-            json!({"query":"q","outputSchema":{"type":"object","properties":{"x":true},"strange":true}}),
+            json!({"query":"q","outputSchema":{"type":"object","properties":[]}}),
         ),
         (
             ids::SEARCH,
@@ -122,6 +122,27 @@ fn invalid_input_and_unknown_capabilities_never_send() {
         ),
         (ids::ANSWER, json!({"query":"q","stream":true})),
         (ids::ANSWER, json!({"query":"q","model":"invalid"})),
+        (
+            ids::ANSWER,
+            json!({"query":"q","outputSchema":{"type":false,"properties":[]}}),
+        ),
+        (
+            ids::ANSWER,
+            json!({"query":"q","outputSchema":{"type":"object","properties":[]}}),
+        ),
+        (
+            ids::ANSWER,
+            json!({"query":"q","outputSchema":{"type":"object","required":[3]}}),
+        ),
+        (
+            ids::ANSWER,
+            json!({"query":"q","outputSchema":{"additionalProperties":"yes"}}),
+        ),
+        (
+            ids::ANSWER,
+            json!({"query":"q","outputSchema":{"type":null}}),
+        ),
+        (ids::ANSWER, json!({"query":"q","outputSchema":null})),
         ("exa.management", json!({})),
     ] {
         let error =
@@ -132,6 +153,59 @@ fn invalid_input_and_unknown_capabilities_never_send() {
         );
     }
 }
+#[test]
+fn root_output_schema_extensions_are_preserved_and_known_types_are_checked() {
+    let search_schema = json!({"type":"object","$schema":"http://json-schema.org/draft-07/schema#","examples":[{"value":17}],"properties":{"nested":{"type":"object","properties":{"score":{"type":"number"}}}}});
+    let search_input = json!({"query":"q","outputSchema":search_schema});
+    call(
+        ids::SEARCH,
+        search_input.clone(),
+        json!({"results":[],"output":{"content":{}}}),
+        "/search",
+    );
+    let answer_schema = json!({"type":"object","$schema":"http://json-schema.org/draft-07/schema#","properties":{"result":{"type":"string"}},"required":["result"],"additionalProperties":false});
+    call(
+        ids::ANSWER,
+        json!({"query":"q","outputSchema":answer_schema}),
+        json!({"answer":{"result":"ok"}}),
+        "/answer",
+    );
+    use dekopon_provider_sdk::CommandRun;
+    let cli = |args: &[&str]| {
+        commands::run(
+            &args.iter().map(|s| (*s).to_owned()).collect::<Vec<_>>(),
+            None,
+        )
+    };
+    let search_json = search_input.to_string();
+    let CommandRun::Proposal(proposal) = cli(&["search", "--input-json", &search_json]).unwrap()
+    else {
+        panic!("search input-json must propose");
+    };
+    assert_eq!(proposal.input, search_input);
+    let schema_json = search_schema.to_string();
+    let CommandRun::Proposal(proposal) =
+        cli(&["search", "q", "--output-schema-json", &schema_json]).unwrap()
+    else {
+        panic!("search output-schema-json must propose");
+    };
+    assert_eq!(proposal.input["outputSchema"], search_schema);
+    let bad_schema = r#"{"type":false,"properties":[]}"#;
+    for args in [
+        vec!["answer", "q", "--output-schema-json", bad_schema],
+        vec![
+            "answer",
+            "--input-json",
+            r#"{"query":"q","outputSchema":{"type":false,"properties":[]}}"#,
+        ],
+    ] {
+        assert!(
+            cli(&args).is_err(),
+            "malformed outputSchema must not propose: {args:?}"
+        );
+    }
+}
+
 #[test]
 fn status_transport_and_malformed_response() {
     for (status, code) in [

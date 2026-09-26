@@ -46,7 +46,7 @@ pub(crate) enum Compliance {
 }
 
 #[derive(Deserialize)]
-#[serde(deny_unknown_fields, tag = "type", rename_all = "lowercase")]
+#[serde(tag = "type", rename_all = "lowercase")]
 pub(crate) enum SearchOutputSchema {
     Text {
         description: Option<String>,
@@ -171,7 +171,20 @@ pub(crate) struct Answer {
     pub model: Option<AnswerModel>,
     pub system_prompt: Option<String>,
     pub user_location: Option<String>,
-    pub output_schema: Option<serde_json::Map<String, Value>>,
+    pub output_schema: Option<AnswerOutputSchema>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct AnswerOutputSchema {
+    #[serde(rename = "type")]
+    pub schema_type: Option<String>,
+    pub properties: Option<serde_json::Map<String, Value>>,
+    pub required: Option<Vec<String>>,
+    pub description: Option<String>,
+    pub additional_properties: Option<bool>,
+    #[serde(flatten)]
+    pub extensions: serde_json::Map<String, Value>,
 }
 
 #[derive(Deserialize)]
