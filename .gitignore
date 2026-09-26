@@ -1,0 +1,6 @@
+target/
+exa-search-provider.wasm
+exa-search-provider.wasm.sha256
+exa-search-provider.cdx.json
+component.wit
+component-imports.txt
