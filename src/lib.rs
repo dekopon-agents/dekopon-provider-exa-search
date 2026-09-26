@@ -66,15 +66,51 @@ impl Provider for Exa {
 fn input_schema(id: &str) -> Value {
     let (properties, required) = match id {
         ids::SEARCH => (
-            json!({"query": {"type":"string","minLength":1}, "includeDomains":{"type":"array","items":{"type":"string"}}, "excludeDomains":{"type":"array","items":{"type":"string"}}, "startPublishedDate":{"type":"string"}, "endPublishedDate":{"type":"string"}, "numResults":{"type":"integer","minimum":1,"maximum":100}, "moderation":{"type":"boolean"}, "contents":{"type":"object"}, "additionalQueries":{"type":"array"}, "type":{"enum":["instant","fast","auto","deep-lite","deep","deep-reasoning"]}, "category":{"type":"string"}, "userLocation":{"type":"string"}, "compliance":{"enum":["hipaa"]}, "outputSchema":{"type":"object"}, "systemPrompt":{"type":"string"}}),
+            json!({
+                "query": {"type":"string","minLength":1},
+                "includeDomains": {"type":["array","null"],"items":{"type":"string"}},
+                "excludeDomains": {"type":["array","null"],"items":{"type":"string"}},
+                "startPublishedDate": {"type":["string","null"]},
+                "endPublishedDate": {"type":["string","null"]},
+                "numResults": {"type":["integer","null"],"minimum":1,"maximum":100},
+                "moderation": {"type":["boolean","null"]},
+                "contents": {"type":["object","null"]},
+                "additionalQueries": {"type":["array","null"]},
+                "type": {"enum":["instant","fast","auto","deep-lite","deep","deep-reasoning",null]},
+                "category": {"type":["string","null"]},
+                "userLocation": {"type":["string","null"]},
+                "compliance": {"enum":["hipaa",null]},
+                "outputSchema": {"type":["object","null"]},
+                "systemPrompt": {"type":["string","null"]}
+            }),
             vec!["query"],
         ),
         ids::CONTENTS => (
-            json!({"ids":{"type":"array","minItems":1,"maxItems":100}, "urls":{"type":"array","minItems":1,"maxItems":100}, "compliance":{"enum":["hipaa"]}, "text":{}, "highlights":{}, "summary":{"type":"object"}, "extras":{"type":"object"}, "livecrawlTimeout":{"type":"integer"}, "maxAgeHours":{"type":"integer"}, "snapshotAsOf":{"type":"string"}, "subpages":{"type":"integer"}, "subpageTarget":{}}),
+            json!({
+                "ids":{"type":"array","minItems":1,"maxItems":100},
+                "urls":{"type":"array","minItems":1,"maxItems":100},
+                "compliance":{"enum":["hipaa",null]},
+                "text":{"type":["boolean","object","null"]},
+                "highlights":{"type":["boolean","object","null"]},
+                "summary":{"type":["object","null"]},
+                "extras":{"type":["object","null"]},
+                "livecrawlTimeout":{"type":["integer","null"]},
+                "maxAgeHours":{"type":["integer","null"]},
+                "snapshotAsOf":{"type":["string","null"]},
+                "subpages":{"type":["integer","null"]},
+                "subpageTarget":{"type":["string","array","null"]}
+            }),
             vec![],
         ),
         ids::ANSWER => (
-            json!({"query":{"type":"string","minLength":1}, "text":{"type":"boolean"}, "model":{"enum":["exa","exa-pro","exa-research","exa-fast"]}, "systemPrompt":{"type":"string"}, "userLocation":{"type":"string"}, "outputSchema":{"type":"object"}}),
+            json!({
+                "query":{"type":"string","minLength":1},
+                "text":{"type":"boolean"},
+                "model":{"enum":["exa","exa-pro","exa-research","exa-fast"]},
+                "systemPrompt":{"type":"string"},
+                "userLocation":{"type":["string","null"]},
+                "outputSchema":{"type":"object"}
+            }),
             vec!["query"],
         ),
         _ => unreachable!("manifest uses fixed IDs"),

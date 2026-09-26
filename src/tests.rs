@@ -270,6 +270,69 @@ fn manifest_declares_only_these_capabilities() {
     );
 }
 #[test]
+fn manifest_schemas_admit_supported_explicit_nulls() {
+    let manifest = Exa::manifest();
+    let cases = [
+        (
+            ids::SEARCH,
+            json!({
+                "query":"q", "includeDomains":null, "excludeDomains":null,
+                "startPublishedDate":null, "endPublishedDate":null,
+                "numResults":null, "moderation":null, "contents":null,
+                "additionalQueries":null, "type":null, "category":null,
+                "userLocation":null, "compliance":null, "outputSchema":null,
+                "systemPrompt":null
+            }),
+        ),
+        (
+            ids::CONTENTS,
+            json!({
+                "ids":["doc"], "compliance":null, "text":null,
+                "highlights":null, "summary":null, "extras":null,
+                "livecrawlTimeout":null, "maxAgeHours":null,
+                "snapshotAsOf":null, "subpages":null, "subpageTarget":null
+            }),
+        ),
+        (ids::ANSWER, json!({"query":"q", "userLocation":null})),
+    ];
+    for (id, request) in cases {
+        validate(id, &request).expect("explicit null request is supported");
+        let schema = &manifest
+            .capabilities
+            .iter()
+            .find(|capability| capability.id.as_str() == id)
+            .expect("manifest declares capability")
+            .input_schema;
+        for (field, value) in request.as_object().unwrap() {
+            if !value.is_null() {
+                continue;
+            }
+            let property = &schema["properties"][field];
+            let types_include_null = property["type"]
+                .as_array()
+                .is_some_and(|types| types.contains(&json!("null")));
+            let enum_includes_null = property["enum"]
+                .as_array()
+                .is_some_and(|values| values.contains(&Value::Null));
+            assert!(
+                types_include_null || enum_includes_null,
+                "{id}.{field} rejects explicit null: {property}"
+            );
+        }
+    }
+    let answer = &manifest
+        .capabilities
+        .iter()
+        .find(|capability| capability.id.as_str() == ids::ANSWER)
+        .unwrap()
+        .input_schema;
+    assert_eq!(
+        answer["properties"]["outputSchema"]["type"], "object",
+        "answer outputSchema is not nullable"
+    );
+}
+
+#[test]
 fn cli_proposes_validated_input_without_egress() {
     use dekopon_provider_sdk::CommandRun;
     let run = |args: &[&str], stdin: Option<&str>| {
