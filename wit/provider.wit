@@ -1,0 +1,7 @@
+package dekopon:exa-search@0.1.0;
+
+/// Three fixed, broker-mediated Exa search operations.
+world provider {
+    include dekopon:provider/provider-cli@0.3.0;
+    import dekopon:http/client@1.1.0;
+}

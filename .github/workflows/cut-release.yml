@@ -1,0 +1,16 @@
+name: Cut release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version without the v prefix
+        type: string
+        required: true
+jobs:
+  cut:
+    uses: dekopon-agents/provider-workflows/.github/workflows/cut-release.yml@c8404236c18bcff3e089677e99ec3075d14b5679
+    permissions:
+      contents: write
+    with:
+      version: ${{ inputs.version }}
+    secrets: inherit
