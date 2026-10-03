@@ -1,28 +1,23 @@
 //! Real production component under the SDK broker host; no paid network calls.
-//! HTTP success uses synthetic injected-send unit fixtures because the SDK testkit cannot
-//! substitute an HTTPS response for the fixed production origin.
-use dekopon_provider_sdk_testkit::{CommandRunOutcome, FakeBroker};
+use dekopon_exa_search_provider::Exa;
+use dekopon_provider_sdk::provider;
+use dekopon_provider_sdk_testkit::{Harness, conformance};
 use serde_json::json;
+use std::path::PathBuf;
 
-fn argv(words: &[&str]) -> Vec<String> {
-    words.iter().map(|word| (*word).into()).collect()
+fn component() -> PathBuf {
+    std::env::var_os("DEKOPON_PROVIDER_COMPONENT")
+        .expect("build component and set DEKOPON_PROVIDER_COMPONENT")
+        .into()
 }
 
-#[tokio::test(flavor = "multi_thread")]
-async fn component_exports_narrow_surface_and_denies_ungranted_http()
--> Result<(), Box<dyn std::error::Error>> {
-    let path = std::env::var("DEKOPON_PROVIDER_COMPONENT")
-        .expect("build component and set DEKOPON_PROVIDER_COMPONENT");
-    let broker = FakeBroker::builder()
-        .component(path)
-        .provider("exa")
-        .build()
-        .await?;
-    let manifests: Vec<_> = broker.registry().manifests().collect();
-    assert_eq!(manifests.len(), 1);
-    assert_eq!(manifests[0].command_words, ["exa"]);
+#[test]
+fn real_component_conforms_and_denies_ungranted_http() -> Result<(), Box<dyn std::error::Error>> {
+    let path = component();
+    conformance::<Exa>(&path)?;
+    let manifest = provider::manifest::<Exa>()?;
     assert_eq!(
-        manifests[0]
+        manifest
             .capabilities
             .iter()
             .map(|c| c.id.as_str())
@@ -34,74 +29,34 @@ async fn component_exports_narrow_surface_and_denies_ungranted_http()
         ("exa.contents", json!({"urls":["https://example.org"]})),
         ("exa.answer", json!({"query":"unpaid test"})),
     ] {
-        let error = broker
-            .invoke(capability, input)
-            .await
-            .expect_err("HTTP grant omitted");
         assert!(
-            format!("{error:?}").contains("HostCallRejected"),
-            "{error:?}"
+            Harness::<Exa>::get(&path).call(capability, input).is_err(),
+            "no HTTP grant"
         );
     }
-    let error = broker
-        .invoke("exa.search", json!({"query":"q","stream":true}))
-        .await
-        .expect_err("invalid before HTTP");
-    assert_eq!(
-        error.provider_failure().map(|(code, _)| code),
-        Some("invalid-input")
-    );
-    let error = broker
-        .invoke("exa.management", json!({}))
-        .await
-        .expect_err("not in manifest");
-    assert!(error.provider_failure().is_none());
-    for words in [
-        &["--help"][..],
-        &["search", "--help"],
-        &["answer", "--help"],
+    for input in [
+        json!({"query":"q","stream":true}),
+        json!({"stdin_json":true,"query":"q"}),
+        json!({"query":"q","outputSchema":"[]"}),
     ] {
-        match broker.run_command("exa", &argv(words), None).await? {
-            CommandRunOutcome::Rendered {
-                stdout, status: 0, ..
-            } => assert!(stdout.contains("Usage:"), "{stdout}"),
-            other => panic!("help must not reach HTTP: {other:?}"),
-        }
+        let run = Harness::<Exa>::get(&path).call("exa.search", input)?;
+        assert_ne!(run.status, 0);
+        assert!(run.stdout.is_empty());
+        assert!(run.http_calls.is_empty());
     }
-    for words in [
-        &["search"][..],
-        &["missing"],
-        &["answer", "q", "--stream"],
-        &["contents", "--id", "x", "https://x"],
+    for bytes in [
+        Vec::new(),
+        b"{".to_vec(),
+        b"[]".to_vec(),
+        vec![b'x'; 65_537],
     ] {
-        match broker.run_command("exa", &argv(words), None).await? {
-            CommandRunOutcome::Rendered { status: 2, .. } | CommandRunOutcome::Failed { .. } => {}
-            other => panic!("bad input must not reach HTTP: {other:?}"),
-        }
+        let run = Harness::<Exa>::get(&path)
+            .stdin(bytes)
+            .call("exa.search", json!({"stdin_json":true}))?;
+        assert_ne!(run.status, 0);
+        assert!(run.stdout.is_empty());
+        assert!(run.http_calls.is_empty());
     }
-    for (words, capability) in [
-        (vec!["search", "q", "--type", "deep"], "exa.search"),
-        (vec!["contents", "--id", "doc-1"], "exa.contents"),
-        (vec!["answer", "why?", "--model", "exa-pro"], "exa.answer"),
-    ] {
-        match broker.run_command("exa", &argv(&words), None).await? {
-            CommandRunOutcome::Proposed {
-                capability: proposed,
-                input,
-                ..
-            } => {
-                assert_eq!(proposed.as_str(), capability);
-                let error = broker
-                    .invoke(capability, input)
-                    .await
-                    .expect_err("no HTTP grant");
-                assert!(
-                    format!("{error:?}").contains("HostCallRejected"),
-                    "{error:?}"
-                );
-            }
-            other => panic!("expected proposal {words:?}: {other:?}"),
-        }
-    }
+    assert_eq!(Harness::<Exa>::compiled_identities(), 1);
     Ok(())
 }

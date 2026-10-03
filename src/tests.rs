@@ -1,96 +1,176 @@
 use super::*;
-use dekopon_provider_sdk::Provider;
-use serde_json::json;
+use dekopon_provider_sdk::{CommandRunOutcome, provider};
+use dekopon_provider_sdk_testkit::{HttpScript, Native};
 
-fn id(id: &str) -> CapabilityId {
-    id.parse().unwrap()
+fn proposal(args: &[&str], piped: bool, expected: &str) -> Value {
+    let argv: Vec<_> = args.iter().map(|s| (*s).to_owned()).collect();
+    let CommandRunOutcome::Proposed {
+        capability,
+        input,
+        secret_use,
+    } = provider::command::<Exa>(&argv, piped)
+    else {
+        panic!("expected proposal: {args:?}")
+    };
+    assert_eq!(capability.as_str(), expected);
+    assert!(secret_use.is_none());
+    input
 }
-fn response(body: Value) -> Result<Response, HttpError> {
-    Ok(Response {
+fn response(body: Value) -> Response {
+    Response {
         status: 200,
         headers: vec![],
         body: serde_json::to_vec(&body).unwrap(),
-    })
-}
-fn call(id_name: &str, input: Value, body: Value, expected: &str) -> Value {
-    validate(id_name, &input).unwrap_or_else(|error| panic!("{id_name} {input}: {error:?}"));
-    invoke_with(&id(id_name), input.clone(), |request| {
-        assert_eq!(request.method, "POST");
-        assert_eq!(request.uri, format!("https://api.exa.ai{expected}"));
-        assert!(
-            request
-                .headers
-                .iter()
-                .any(|h| h.name.eq_ignore_ascii_case("content-type")
-                    && h.value == b"application/json")
-        );
-        assert_eq!(
-            request
-                .headers
-                .iter()
-                .any(|h| h.name.eq_ignore_ascii_case("exa-beta")),
-            input.pointer("/contents/highlights/dynamic").is_some()
-                || input.pointer("/contents/highlights/verbosity").is_some()
-                || input.pointer("/highlights/dynamic").is_some()
-                || input.pointer("/highlights/verbosity").is_some()
-        );
-        assert_eq!(
-            serde_json::from_slice::<Value>(&request.body).unwrap(),
-            input
-        );
-        assert!(
-            request
-                .headers
-                .iter()
-                .all(|h| !h.name.eq_ignore_ascii_case("authorization"))
-        );
-        response(body.clone())
-    })
-    .unwrap()
+    }
 }
 #[test]
-fn three_fixed_operations_keep_upstream_json() {
-    let search = json!({"query":"orchards", "type":"deep-reasoning", "additionalQueries":["fruit"], "numResults":10, "includeDomains":["example.org/docs"], "moderation":true, "contents":{"highlights":{"dynamic":true,"verbosity":"medium"},"text":{"maxCharacters":1000,"includeSections":["body"]},"summary":{"schema":{"properties":{"nested":{"items":[{"score":1}]}}}},"extras":{"richLinks":1},"maxAgeHours":0,"subpageTarget":["method"]},"outputSchema":{"type":"object","properties":{"answer":{"type":"array","items":{"type":"object","properties":{"url":{"type":"string"}}}}}}});
-    let fixture = json!({"requestId":"abc","results":[{"url":"https://example.org","id":"source","future":{"nested":true}}],"output":{"content":{"answer":[{"url":"https://example.org"}]},"grounding":[{"citations":[{"url":"https://example.org"}]}]},"costDollars":{"total":1.1},"future":77});
-    assert_eq!(
-        call(ids::SEARCH, search, fixture.clone(), "/search"),
-        fixture
-    );
-    let contents = json!({"ids":["doc-1"],"text":{"verbosity":"full"},"highlights":{"query":"fruit"},"summary":{"query":"key points"},"snapshotAsOf":"2026-01-15","subpages":1});
-    let fixture = json!({"results":[{"id":"doc-1","url":"https://example.org","text":"hello","future":true}],"statuses":[],"costDollars":{},"requestId":"id"});
-    assert_eq!(
-        call(ids::CONTENTS, contents, fixture.clone(), "/contents"),
-        fixture
-    );
-    let answer = json!({"query":"Why orchards?", "model":"exa-research", "text":true, "systemPrompt":"cite sources", "outputSchema":{"type":"object","properties":{"result":{"type":"string"}}}});
-    let fixture = json!({"answer":{"result":"reason"},"citations":[{"url":"https://example.org"}],"requestId":"id","future":true});
-    assert_eq!(
-        call(ids::ANSWER, answer, fixture.clone(), "/answer"),
-        fixture
-    );
+fn exact_request_headers_shape_and_stdout_for_all_operations() {
+    for (id, input, path, body) in [
+        (
+            ids::SEARCH,
+            json!({"query":"orchards","type":"deep-reasoning","additionalQueries":["fruit"],"contents":{"highlights":{"dynamic":true,"verbosity":"medium"},"summary":{"schema":r#"{"properties":{"answer":{"type":"array"}}}"#}},"outputSchema":r#"{"type":"object","$schema":"https://json-schema.org/draft/2020-12/schema","properties":{"answer":{"type":"array"}}}"#}),
+            "/search",
+            json!({"results":[],"requestId":"abc","future":{"nested":true}}),
+        ),
+        (
+            ids::CONTENTS,
+            json!({"ids":["doc"],"text":{"verbosity":"full"},"snapshotAsOf":"2026-01-15"}),
+            "/contents",
+            json!({"results":[],"statuses":[],"future":true}),
+        ),
+        (
+            ids::ANSWER,
+            json!({"query":"Why?","model":"exa-research","outputSchema":r#"{"type":"object","properties":{"answer":{"type":"string"}}}"#}),
+            "/answer",
+            json!({"answer":{"result":"yes"},"citations":[],"future":1}),
+        ),
+    ] {
+        let mut wire = input.clone();
+        expand_schema_strings(id, &mut wire).unwrap();
+        let native = Native::<Exa>::new().http(HttpScript::new(
+            "api.exa.ai",
+            "POST",
+            response(body.clone()),
+        ));
+        let result = native.call(id, &input.to_string());
+        assert_eq!(result.status, 0, "{}: {}", id, result.stderr);
+        assert_eq!(result.stdout, format!("{}\n", body).as_bytes());
+        assert!(result.stderr.is_empty());
+        let requests = native.requests();
+        assert_eq!(requests.len(), 1);
+        assert_eq!(requests[0].uri, format!("https://api.exa.ai{path}"));
+        assert_eq!(requests[0].method, "POST");
+        assert_eq!(requests[0].body, serde_json::to_vec(&wire).unwrap());
+        assert_eq!(
+            requests[0]
+                .headers
+                .iter()
+                .map(|h| (h.name.as_str(), h.value.as_slice()))
+                .collect::<Vec<_>>(),
+            if id == ids::SEARCH {
+                vec![
+                    ("content-type", b"application/json".as_slice()),
+                    ("accept", b"application/json".as_slice()),
+                    ("Exa-Beta", b"dynamic-highlights-2026-08-28".as_slice()),
+                ]
+            } else {
+                vec![
+                    ("content-type", b"application/json".as_slice()),
+                    ("accept", b"application/json".as_slice()),
+                ]
+            }
+        );
+    }
 }
 #[test]
-fn invalid_input_and_unknown_capabilities_never_send() {
-    for (cap, input) in [
-        (ids::SEARCH, json!({"query":""})),
+fn marker_only_proposal_and_bounded_stdin_at_invoke() {
+    for (args, id, data) in [
+        (
+            vec!["search", "--input-json", "-"],
+            ids::SEARCH,
+            json!({"query":"q"}),
+        ),
+        (
+            vec!["contents", "--input-json", "-"],
+            ids::CONTENTS,
+            json!({"urls":["https://example.org"]}),
+        ),
+        (
+            vec!["answer", "--input-json", "-"],
+            ids::ANSWER,
+            json!({"query":"q"}),
+        ),
+    ] {
+        let marker = proposal(&args, true, id);
+        assert_eq!(marker, json!({"stdin_json":true}));
+        let native = Native::<Exa>::new()
+            .stdin(data.to_string().into_bytes())
+            .http(HttpScript::new(
+                "api.exa.ai",
+                "POST",
+                response(if id == ids::ANSWER {
+                    json!({"answer":"yes"})
+                } else {
+                    json!({"results":[]})
+                }),
+            ));
+        let run = native.call(id, &marker.to_string());
+        assert_eq!(run.status, 0, "{}", run.stderr);
+        assert_eq!(
+            native.requests()[0].body,
+            serde_json::to_vec(&data).unwrap()
+        );
+        for bytes in [
+            Vec::new(),
+            b"{".to_vec(),
+            b"[]".to_vec(),
+            vec![b'x'; 65_537],
+        ] {
+            let native = Native::<Exa>::new().stdin(bytes);
+            let run = native.call(id, &marker.to_string());
+            assert_ne!(run.status, 0);
+            assert!(run.stdout.is_empty());
+            assert!(native.requests().is_empty());
+        }
+    }
+    assert!(matches!(
+        provider::command::<Exa>(&["search", "--input-json", "-"].map(str::to_owned), false),
+        CommandRunOutcome::Failed { .. }
+    ));
+}
+#[test]
+fn malformed_schema_and_invalid_input_never_send() {
+    for (id, input) in [
+        (ids::SEARCH, json!({"query":"q","outputSchema":"[]"})),
+        (ids::SEARCH, json!({"query":"q","outputSchema":"{"})),
+        (
+            ids::SEARCH,
+            json!({"query":"q","outputSchema":"x".repeat(65_537)}),
+        ),
+        (
+            ids::SEARCH,
+            json!({"query":"q","contents":{"summary":{"schema":"true"}}}),
+        ),
+        (ids::SEARCH, json!({"query":"q","stdin_json":false})),
+        (ids::SEARCH, json!({"query":"q","stdin_json":"invalid"})),
         (ids::SEARCH, json!({"query":"q","stream":true})),
+        (ids::SEARCH, json!({"query":"q","additionalQueries":["a"]})),
+        (ids::CONTENTS, json!({"ids":["doc"],"urls":["https://x"]})),
+        (ids::ANSWER, json!({"query":"q","stream":true})),
+        (ids::ANSWER, json!({"query":"q","outputSchema":null})),
         (
             ids::SEARCH,
             json!({"query":"q","contents":{"context":true}}),
         ),
         (ids::SEARCH, json!({"query":"q","type":"neural"})),
-        (ids::SEARCH, json!({"query":"q","additionalQueries":["a"]})),
         (
             ids::SEARCH,
-            json!({"query":"q","outputSchema":{"type":"object","properties":[]}}),
+            json!({"query":"q","outputSchema":r#"{"type":"object","properties":[]}"#}),
         ),
         (
             ids::SEARCH,
             json!({"query":"q","contents":{"highlights":{"dynamic":true,"maxCharacters":1}}}),
         ),
-        (ids::CONTENTS, json!({"ids":["doc"],"urls":["https://a"]})),
-        (ids::CONTENTS, json!({"ids":[]})),
-        (ids::CONTENTS, json!({"ids":null,"urls":["https://a"]})),
         (
             ids::SEARCH,
             json!({"query":"q","startPublishedDate":"not a date"}),
@@ -100,159 +180,167 @@ fn invalid_input_and_unknown_capabilities_never_send() {
             json!({"query":"q","startPublishedDate":"2026-02-01T00:00:00Z","endPublishedDate":"2026-01-01T00:00:00Z"}),
         ),
         (
-            ids::CONTENTS,
-            json!({"urls":["https://a"],"snapshotAsOf":"yesterday"}),
-        ),
-        (
-            ids::CONTENTS,
-            json!({"urls":["https://a"],"highlights":{"numSentences":2}}),
-        ),
-        (
             ids::SEARCH,
             json!({"query":"q","startCrawlDate":"2026-01-01T00:00:00Z"}),
         ),
+        (ids::CONTENTS, json!({"ids":[]})),
+        (ids::CONTENTS, json!({"ids":null,"urls":["https://x"]})),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"snapshotAsOf":"yesterday"}),
+        ),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"highlights":{"numSentences":2}}),
+        ),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"livecrawl":"always"}),
+        ),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"extras":{"links":1001}}),
+        ),
         (ids::ANSWER, json!({"query":"q","Authorization":"x"})),
-        (
-            ids::CONTENTS,
-            json!({"urls":["https://a"],"livecrawl":"always"}),
-        ),
-        (
-            ids::CONTENTS,
-            json!({"urls":["https://a"],"extras":{"links":1001}}),
-        ),
-        (ids::ANSWER, json!({"query":"q","stream":true})),
         (ids::ANSWER, json!({"query":"q","model":"invalid"})),
         (
             ids::ANSWER,
-            json!({"query":"q","outputSchema":{"type":false,"properties":[]}}),
+            json!({"query":"q","outputSchema":r#"{"type":false,"properties":[]}"#}),
         ),
         (
             ids::ANSWER,
-            json!({"query":"q","outputSchema":{"type":"object","properties":[]}}),
+            json!({"query":"q","outputSchema":r#"{"type":"object","required":[3]}"#}),
         ),
         (
             ids::ANSWER,
-            json!({"query":"q","outputSchema":{"type":"object","required":[3]}}),
+            json!({"query":"q","outputSchema":r#"{"type":null}"#}),
         ),
         (
             ids::ANSWER,
-            json!({"query":"q","outputSchema":{"additionalProperties":"yes"}}),
+            json!({"query":"q","outputSchema":r#"{"additionalProperties":"yes"}"#}),
         ),
         (
             ids::ANSWER,
-            json!({"query":"q","outputSchema":{"type":null}}),
+            json!({"query":"q","outputSchema":r#"{"type":"object","properties":[]}"#}),
         ),
-        (ids::ANSWER, json!({"query":"q","outputSchema":null})),
-        ("exa.management", json!({})),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"summary":{"schema":"[]"}}),
+        ),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"summary":{"schema":"{"}}),
+        ),
     ] {
-        let error =
-            invoke_with(&id(cap), input, |_| panic!("invalid input must not send")).unwrap_err();
+        let native = Native::<Exa>::new();
+        let result = native.call(id, &input.to_string());
+        assert_eq!(result.status, 1, "{id}: {input}");
+        assert!(result.stdout.is_empty());
         assert!(
-            matches!(error.code(), "invalid-input" | "unknown-capability"),
-            "{error:?}"
+            result
+                .stderr
+                .contains("input does not match the Exa operation contract"),
+            "{id}: {input}: {}",
+            result.stderr
         );
+        assert!(native.requests().is_empty());
     }
-}
-#[test]
-fn root_output_schema_extensions_are_preserved_and_known_types_are_checked() {
-    let search_schema = json!({"type":"object","$schema":"http://json-schema.org/draft-07/schema#","examples":[{"value":17}],"properties":{"nested":{"type":"object","properties":{"score":{"type":"number"}}}}});
-    let search_input = json!({"query":"q","outputSchema":search_schema});
-    call(
-        ids::SEARCH,
-        search_input.clone(),
-        json!({"results":[],"output":{"content":{}}}),
-        "/search",
-    );
-    let answer_schema = json!({"type":"object","$schema":"http://json-schema.org/draft-07/schema#","properties":{"result":{"type":"string"}},"required":["result"],"additionalProperties":false});
-    call(
-        ids::ANSWER,
-        json!({"query":"q","outputSchema":answer_schema}),
-        json!({"answer":{"result":"ok"}}),
-        "/answer",
-    );
-    use dekopon_provider_sdk::CommandRun;
-    let cli = |args: &[&str]| {
-        commands::run(
-            &args.iter().map(|s| (*s).to_owned()).collect::<Vec<_>>(),
-            None,
-        )
-    };
-    let search_json = search_input.to_string();
-    let CommandRun::Proposal(proposal) = cli(&["search", "--input-json", &search_json]).unwrap()
-    else {
-        panic!("search input-json must propose");
-    };
-    assert_eq!(proposal.input, search_input);
-    let schema_json = search_schema.to_string();
-    let CommandRun::Proposal(proposal) =
-        cli(&["search", "q", "--output-schema-json", &schema_json]).unwrap()
-    else {
-        panic!("search output-schema-json must propose");
-    };
-    assert_eq!(proposal.input["outputSchema"], search_schema);
-    let bad_schema = r#"{"type":false,"properties":[]}"#;
-    for args in [
-        vec!["answer", "q", "--output-schema-json", bad_schema],
-        vec![
-            "answer",
-            "--input-json",
-            r#"{"query":"q","outputSchema":{"type":false,"properties":[]}}"#,
-        ],
+    for (status, body) in [
+        (400, b"secret".to_vec()),
+        (401, b"secret".to_vec()),
+        (403, b"secret".to_vec()),
+        (422, b"secret".to_vec()),
+        (429, b"secret".to_vec()),
+        (503, b"secret".to_vec()),
+        (200, b"not-json".to_vec()),
     ] {
-        assert!(
-            cli(&args).is_err(),
-            "malformed outputSchema must not propose: {args:?}"
-        );
-    }
-}
-
-#[test]
-fn status_transport_and_malformed_response() {
-    for (status, code) in [
-        (401, "unauthorized"),
-        (403, "forbidden"),
-        (429, "rate-limited"),
-        (422, "unprocessable"),
-        (503, "unexpected-status"),
-    ] {
-        let error = invoke_with(&id(ids::ANSWER), json!({"query":"hi"}), |_| {
-            Ok(Response {
+        let native = Native::<Exa>::new().http(HttpScript::new(
+            "api.exa.ai",
+            "POST",
+            Response {
                 status,
                 headers: vec![],
-                body: b"secret".to_vec(),
-            })
-        })
-        .unwrap_err();
-        assert_eq!(error.code(), code);
-        assert!(!error.message().contains("secret"));
+                body,
+            },
+        ));
+        let result = native.call(ids::SEARCH, &json!({"query":"q"}).to_string());
+        assert_eq!(result.status, 1, "{status}");
+        assert!(result.stdout.is_empty());
+        assert_eq!(
+            result.stderr,
+            if status == 200 {
+                "Exa returned invalid JSON\n"
+            } else {
+                "Exa refused the request\n"
+            }
+        );
+        assert_eq!(native.requests().len(), 1);
     }
-    let error = invoke_with(&id(ids::SEARCH), json!({"query":"hi"}), |_| {
-        Ok(Response {
-            status: 200,
-            headers: vec![],
-            body: b"no".to_vec(),
-        })
-    })
-    .unwrap_err();
-    assert_eq!(error.code(), "invalid-response");
-    let error = invoke_with(&id(ids::ANSWER), json!({"query":"hi"}), |_| {
-        response(json!({"results":[]}))
-    })
-    .unwrap_err();
-    assert_eq!(error.code(), "invalid-response");
-    let error = invoke_with(&id(ids::CONTENTS), json!({"ids":["doc"]}), |_| {
-        Err(HttpError {
-            code: dekopon_provider_http::HttpErrorCode::Denied,
-            message: "sensitive host detail".into(),
-        })
-    })
-    .unwrap_err();
-    assert_eq!(error.code(), "http-failed");
-    assert!(!error.message().contains("sensitive"));
 }
 #[test]
-fn manifest_declares_only_these_capabilities() {
-    let manifest = Exa::manifest();
+fn nullable_summary_schema_preserves_exact_exa_request() {
+    for (id, input, args) in [
+        (
+            ids::SEARCH,
+            json!({"query":"q","contents":{"summary":{"schema":null}}}),
+            vec![
+                "search",
+                "--input-json",
+                r#"{"query":"q","contents":{"summary":{"schema":null}}}"#,
+            ],
+        ),
+        (
+            ids::CONTENTS,
+            json!({"ids":["doc"],"summary":{"schema":null}}),
+            vec![
+                "contents",
+                "--id",
+                "doc",
+                "--contents-json",
+                r#"{"summary":{"schema":null}}"#,
+            ],
+        ),
+    ] {
+        let proposed = proposal(&args, false, id);
+        assert_eq!(
+            proposed, input,
+            "null must not be rewritten by CLI proposal"
+        );
+        let native = Native::<Exa>::new().http(HttpScript::new(
+            "api.exa.ai",
+            "POST",
+            response(json!({"results":[]})),
+        ));
+        let result = native.call(id, &proposed.to_string());
+        assert_eq!(result.status, 0, "{}", result.stderr);
+        assert_eq!(native.requests().len(), 1);
+        assert_eq!(
+            native.requests()[0].body,
+            serde_json::to_vec(&input).unwrap()
+        );
+        assert!(result.stderr.is_empty());
+        assert_eq!(result.stdout, b"{\"results\":[]}\n");
+    }
+    let manifest = provider::manifest::<Exa>().unwrap();
+    for cap in manifest.capabilities.iter().take(2) {
+        let summary = if cap.id.as_str() == ids::SEARCH {
+            &cap.input_schema["properties"]["contents"]["anyOf"][0]["properties"]["summary"]
+        } else {
+            &cap.input_schema["properties"]["summary"]
+        };
+        assert_eq!(
+            summary["anyOf"][0]["properties"]["schema"]["anyOf"][0]["type"],
+            "string"
+        );
+        assert_eq!(
+            summary["anyOf"][0]["properties"]["schema"]["anyOf"][1]["type"],
+            "null"
+        );
+    }
+}
+#[test]
+fn manifest_is_closed_and_cli_remains_narrow() {
+    let manifest = provider::manifest::<Exa>().unwrap();
     assert_eq!(manifest.command_words, ["exa"]);
     assert_eq!(
         manifest
@@ -266,165 +354,73 @@ fn manifest_declares_only_these_capabilities() {
         manifest
             .capabilities
             .iter()
-            .all(|c| c.input_schema["additionalProperties"] == false)
+            .all(|c| c.effect == EffectKind::ReadOnly
+                && c.risk == RiskLevel::Medium
+                && c.input_schema["additionalProperties"] == false)
     );
-}
-#[test]
-fn manifest_schemas_admit_supported_explicit_nulls() {
-    let manifest = Exa::manifest();
-    let cases = [
-        (
-            ids::SEARCH,
-            json!({
-                "query":"q", "includeDomains":null, "excludeDomains":null,
-                "startPublishedDate":null, "endPublishedDate":null,
-                "numResults":null, "moderation":null, "contents":null,
-                "additionalQueries":null, "type":null, "category":null,
-                "userLocation":null, "compliance":null, "outputSchema":null,
-                "systemPrompt":null
-            }),
-        ),
-        (
-            ids::CONTENTS,
-            json!({
-                "ids":["doc"], "compliance":null, "text":null,
-                "highlights":null, "summary":null, "extras":null,
-                "livecrawlTimeout":null, "maxAgeHours":null,
-                "snapshotAsOf":null, "subpages":null, "subpageTarget":null
-            }),
-        ),
-        (ids::ANSWER, json!({"query":"q", "userLocation":null})),
-    ];
-    for (id, request) in cases {
-        validate(id, &request).expect("explicit null request is supported");
-        let schema = &manifest
-            .capabilities
-            .iter()
-            .find(|capability| capability.id.as_str() == id)
-            .expect("manifest declares capability")
-            .input_schema;
-        for (field, value) in request.as_object().unwrap() {
-            if !value.is_null() {
-                continue;
-            }
-            let property = &schema["properties"][field];
-            let types_include_null = property["type"]
-                .as_array()
-                .is_some_and(|types| types.contains(&json!("null")));
-            let enum_includes_null = property["enum"]
-                .as_array()
-                .is_some_and(|values| values.contains(&Value::Null));
-            assert!(
-                types_include_null || enum_includes_null,
-                "{id}.{field} rejects explicit null: {property}"
-            );
-        }
-    }
-    let answer = &manifest
-        .capabilities
-        .iter()
-        .find(|capability| capability.id.as_str() == ids::ANSWER)
-        .unwrap()
-        .input_schema;
     assert_eq!(
-        answer["properties"]["outputSchema"]["type"], "object",
-        "answer outputSchema is not nullable"
+        manifest.capabilities[0].input_schema["properties"]["outputSchema"]["type"],
+        json!(["string", "null"])
     );
-}
-
-#[test]
-fn cli_proposes_validated_input_without_egress() {
-    use dekopon_provider_sdk::CommandRun;
-    let run = |args: &[&str], stdin: Option<&str>| {
-        commands::run(
-            &args.iter().map(|s| s.to_string()).collect::<Vec<_>>(),
-            stdin,
-        )
-    };
-    for (args, expected) in [
-        (
-            vec![
-                "search",
-                "q",
-                "--type",
-                "deep",
-                "--num-results",
-                "2",
-                "--include-domain",
-                "example.org",
-                "--text",
-            ],
-            ids::SEARCH,
-        ),
-        (
-            vec!["contents", "https://example.org", "--max-age-hours", "-1"],
-            ids::CONTENTS,
-        ),
-        (
-            vec!["contents", "--id", "doc-1", "--highlights"],
-            ids::CONTENTS,
-        ),
-        (vec!["answer", "why?", "--model", "exa-pro"], ids::ANSWER),
-    ] {
-        let CommandRun::Proposal(invocation) = run(&args, None).unwrap() else {
-            panic!("expected invocation {args:?}")
-        };
-        assert_eq!(invocation.capability.as_str(), expected);
-        validate(expected, &invocation.input).unwrap();
-    }
-    let CommandRun::Proposal(invocation) = run(&["search","--input-json","-"], Some(r#"{"query":"q","contents":{"summary":{"schema":{"properties":{"x":{"type":"object"}}}}}}"#)).unwrap() else {panic!("JSON input");};
     assert_eq!(
-        invocation.input["contents"]["summary"]["schema"]["properties"]["x"]["type"],
-        "object"
+        proposal(
+            &["search", "q", "--type", "deep", "--num-results", "2"],
+            false,
+            ids::SEARCH
+        )["numResults"],
+        2
     );
-    assert!(
-        run(
-            &["search", "q", "--input-json", r#"{"query":"other"}"#],
-            None
-        )
-        .is_err()
+    assert_eq!(
+        proposal(
+            &["contents", "--id", "doc", "--max-age-hours", "-1"],
+            false,
+            ids::CONTENTS
+        )["maxAgeHours"],
+        -1
     );
-    assert!(run(&["contents", "--id", "a", "https://a"], None).is_err());
-    assert!(run(&["answer", "q", "--input-json", r#"{"query":"q"}"#], None).is_err());
-    assert!(
-        run(
-            &[
-                "contents",
-                "https://a",
-                "--contents-json",
-                r#"{"urls":["https://other"]}"#
-            ],
-            None
-        )
-        .is_err()
+    assert_eq!(
+        proposal(&["answer", "q", "--model", "exa-pro"], false, ids::ANSWER)["model"],
+        "exa-pro"
     );
-    assert!(
-        run(
+    let contents = proposal(
+        &[
+            "contents",
+            "--id",
+            "doc",
+            "--contents-json",
+            r#"{"summary":{"schema":{"properties":{"x":{"type":"object"}}}}}"#,
+        ],
+        false,
+        ids::CONTENTS,
+    );
+    assert_eq!(
+        contents["summary"]["schema"],
+        r#"{"properties":{"x":{"type":"object"}}}"#
+    );
+    assert_eq!(
+        proposal(
             &[
                 "search",
                 "q",
-                "--contents-json",
-                r#"{"highlights":true}"#,
-                "--highlights"
+                "--output-schema-json",
+                r#"{"type":"object","properties":{"x":{"type":"string"}}}"#
             ],
-            None
-        )
-        .is_err()
+            false,
+            ids::SEARCH
+        )["outputSchema"],
+        r#"{"type":"object","properties":{"x":{"type":"string"}}}"#
     );
-    let optional = json!({"query":"q","moderation":null,"contents":{"text":null,"summary":{"schema":{"properties":{"nested":{"type":"array"}}}}}});
-    assert_eq!(
-        call(ids::SEARCH, optional, json!({"results":[]}), "/search"),
-        json!({"results":[]})
-    );
-    for args in [
-        &["--help"][..],
-        &["search", "--help"],
-        &["unknown"],
-        &["answer"],
+    for words in [
+        vec!["search", "q", "--input-json", "-"],
+        vec!["contents", "--id", "a", "https://x"],
+        vec!["answer", "q", "--input-json", "{}"],
     ] {
-        assert!(matches!(
-            run(args, None),
-            Ok(CommandRun::Rendered { .. }) | Err(_)
+        assert!(!matches!(
+            provider::command::<Exa>(
+                &words.iter().map(|s| (*s).to_owned()).collect::<Vec<_>>(),
+                true
+            ),
+            CommandRunOutcome::Proposed { .. }
         ));
     }
 }
