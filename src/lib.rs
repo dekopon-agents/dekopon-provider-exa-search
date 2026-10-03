@@ -3,14 +3,19 @@
 mod commands;
 mod models;
 
-use dekopon_provider_http::{Header, HttpError, Request, Response, method};
-use dekopon_provider_sdk::{
-    CapabilityId, CommandRun, EffectKind, Provider, ProviderApiVersion, ProviderCapability,
-    ProviderError, ProviderManifest, RiskLevel,
+use dekopon_provider_sdk::provider::{
+    self, Capability, Code, Failure, Header, Http, HttpError, Proposal, Provider, Request,
+    Response, Stdout, Usage, method,
 };
+use dekopon_provider_sdk::{EffectKind, RiskLevel};
 use models::{BoolOr, ContentsOptions, StringOrList};
 use serde::de::DeserializeOwned;
+use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
+use std::{
+    fmt,
+    io::{Read, Write},
+};
 
 pub(crate) mod ids {
     pub const SEARCH: &str = "exa.search";
@@ -18,49 +23,126 @@ pub(crate) mod ids {
     pub const ANSWER: &str = "exa.answer";
 }
 
-mod bindings {
-    wit_bindgen::generate!({
-        path: "wit",
-        world: "provider",
-        generate_all,
-        pub_export_macro: true,
-    });
+pub struct Exa;
+pub struct Search;
+pub struct Contents;
+pub struct Answer;
+
+impl Provider for Exa {
+    const ID: &'static str = "exa";
+    const COMMAND_WORDS: &'static [&'static str] = &["exa"];
+    const DESCRIPTION: &'static str = "Fixed Exa search, contents and buffered answer requests";
+    type Args = commands::Args;
+    type Capabilities = (Search, Contents, Answer);
+    fn propose(args: Self::Args, stdin_piped: bool) -> Result<Proposal<Self>, Usage> {
+        commands::propose(args, stdin_piped)
+    }
 }
 
-struct Exa;
-impl Provider for Exa {
-    fn manifest() -> ProviderManifest {
-        ProviderManifest {
-            api_version: ProviderApiVersion::V1Alpha1,
-            id: "exa".parse().expect("static ID"),
-            description: "Fixed Exa search, contents and buffered answer requests".into(),
-            command_words: vec!["exa".into()],
-            capabilities: [
-                (
-                    ids::SEARCH,
-                    "Search with optional extraction and synchronous synthesis",
-                ),
-                (ids::CONTENTS, "Retrieve content by document IDs or URLs"),
-                (ids::ANSWER, "Generate a buffered cited answer"),
-            ]
-            .into_iter()
-            .map(|(id, description)| ProviderCapability {
-                id: id.parse().expect("static capability ID"),
-                description: description.into(),
-                // Search/answer are billable reads. A grant is necessary even without a write.
-                effect: EffectKind::ReadOnly,
-                risk: RiskLevel::Medium,
-                input_schema: input_schema(id),
-            })
-            .collect(),
+#[derive(Debug)]
+pub struct ProviderError {
+    code: Code,
+    message: &'static str,
+}
+impl ProviderError {
+    fn new(code: &'static str, message: &'static str) -> Self {
+        Self {
+            code: Code::new(code),
+            message,
         }
     }
-    fn run_command(argv: &[String], stdin: Option<&str>) -> Result<CommandRun, ProviderError> {
-        commands::run(argv, stdin)
+    fn usage(message: &'static str) -> Self {
+        Self {
+            code: Code::USAGE,
+            message,
+        }
     }
-    fn invoke(capability: &CapabilityId, input: Value) -> Result<Value, ProviderError> {
-        invoke_with(capability, input, dekopon_provider_http::send)
+}
+impl fmt::Display for ProviderError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(self.message)
     }
+}
+impl Failure for ProviderError {
+    fn code(&self) -> Code {
+        self.code
+    }
+}
+
+// Operation is statically selected; its validated request retains explicit JSON nulls.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(transparent)]
+pub struct OperationInput<T> {
+    value: Value,
+    #[serde(skip)]
+    marker: std::marker::PhantomData<T>,
+}
+impl<T> OperationInput<T> {
+    fn new(value: Value) -> Self {
+        Self {
+            value,
+            marker: std::marker::PhantomData,
+        }
+    }
+}
+macro_rules! schema_for {
+    ($type:ident, $id:expr) => {
+        impl schemars::JsonSchema for OperationInput<$type> {
+            fn schema_name() -> std::borrow::Cow<'static, str> {
+                stringify!($type).into()
+            }
+            fn json_schema(_: &mut schemars::SchemaGenerator) -> schemars::Schema {
+                schema($id)
+            }
+        }
+    };
+}
+fn schema(id: &str) -> schemars::Schema {
+    let value = input_schema(id);
+    schemars::Schema::from(value.as_object().expect("static schema").clone())
+}
+schema_for!(Search, ids::SEARCH);
+schema_for!(Contents, ids::CONTENTS);
+schema_for!(Answer, ids::ANSWER);
+macro_rules! operation {
+    ($type:ident, $name:literal, $description:literal, $id:expr) => {
+        impl Capability for $type {
+            type Provider = Exa;
+            const NAME: &'static str = $name;
+            const DESCRIPTION: &'static str = $description;
+            const EFFECT: EffectKind = EffectKind::ReadOnly;
+            const RISK: RiskLevel = RiskLevel::Medium;
+            type Input = OperationInput<$type>;
+            type Needs = Http;
+            type Error = ProviderError;
+            fn run(input: Self::Input, http: Http, out: &mut Stdout) -> Result<(), ProviderError> {
+                run_operation($id, input.value, http, out)
+            }
+        }
+    };
+}
+operation!(
+    Search,
+    "search",
+    "Search with optional extraction and synchronous synthesis",
+    ids::SEARCH
+);
+operation!(
+    Contents,
+    "contents",
+    "Retrieve content by document IDs or URLs",
+    ids::CONTENTS
+);
+operation!(
+    Answer,
+    "answer",
+    "Generate a buffered cited answer",
+    ids::ANSWER
+);
+
+#[allow(unsafe_code)]
+mod export {
+    dekopon_provider_sdk::export!(super::Exa);
 }
 
 fn input_schema(id: &str) -> Value {
@@ -115,7 +197,65 @@ fn input_schema(id: &str) -> Value {
         ),
         _ => unreachable!("manifest uses fixed IDs"),
     };
-    json!({"type":"object", "properties":properties, "required":required, "additionalProperties":false})
+    let mut schema = json!({"type":"object", "properties":properties, "required":required, "additionalProperties":false});
+    let fields = schema["properties"].as_object_mut().expect("static fields");
+    fields.insert("stdin_json".into(), json!({"type":"boolean"}));
+    // A marker-only proposal cannot contain a query; all expanded inputs still validate it.
+    if id != ids::CONTENTS {
+        schema["required"] = json!([]);
+    }
+    let fields = schema["properties"].as_object_mut().expect("static fields");
+    let object =
+        |props: Value| json!({"type":"object","properties":props,"additionalProperties":false});
+    let nullable = |shape: Value| json!({"anyOf":[shape,{"type":"null"}]});
+    let string_null = json!({"type":["string","null"], "maxLength":65536});
+    let schema_string = json!({"type":"string", "maxLength":65536});
+    let text = object(json!({
+        "maxCharacters":{"type":"integer"}, "includeHtmlTags":{"type":"boolean"},
+        "verbosity":{"type":"string"}, "includeSections":{"type":"array","items":{"type":"string"}},
+        "excludeSections":{"type":"array","items":{"type":"string"}}
+    }));
+    let highlights = object(json!({
+        "query":{"type":"string"}, "verbosity":{"type":"string"},
+        "dynamic":{"type":"boolean"}, "maxCharacters":{"type":"integer"}
+    }));
+    let summary = object(json!({"query":{"type":"string"}, "schema":schema_string}));
+    let extras = object(json!({
+        "links":{"type":"integer"}, "imageLinks":{"type":"integer"},
+        "richImageLinks":{"type":"integer"}, "richLinks":{"type":"integer"},
+        "codeBlocks":{"type":"integer"}
+    }));
+    let options = object(json!({
+        "text":{"anyOf":[{"type":"boolean"},text,{"type":"null"}]},
+        "highlights":{"anyOf":[{"type":"boolean"},highlights,{"type":"null"}]},
+        "summary":nullable(summary),"extras":nullable(extras),
+        "livecrawlTimeout":{"type":["integer","null"]},
+        "maxAgeHours":{"type":["integer","null"]},
+        "snapshotAsOf":string_null,"subpages":{"type":["integer","null"]},
+        "subpageTarget":{"anyOf":[{"type":"string"},{"type":"array","items":{"type":"string"}},{"type":"null"}]}
+    }));
+    match id {
+        ids::SEARCH => {
+            fields.insert("contents".into(), nullable(options));
+            fields.insert(
+                "outputSchema".into(),
+                json!({"type":["string","null"],"maxLength":65536}),
+            );
+        }
+        ids::CONTENTS => {
+            for (key, shape) in options["properties"].as_object().expect("options").iter() {
+                fields.insert(key.clone(), shape.clone());
+            }
+        }
+        ids::ANSWER => {
+            fields.insert(
+                "outputSchema".into(),
+                json!({"type":"string","maxLength":65536}),
+            );
+        }
+        _ => unreachable!(),
+    }
+    schema
 }
 
 fn invalid() -> ProviderError {
@@ -330,11 +470,11 @@ fn validate(id: &str, input: &Value) -> Result<bool, ProviderError> {
 }
 
 fn invoke_with(
-    capability: &CapabilityId,
-    input: Value,
+    id: &str,
+    mut input: Value,
     mut send: impl FnMut(Request) -> Result<Response, HttpError>,
 ) -> Result<Value, ProviderError> {
-    let id = capability.as_str();
+    expand_schema_strings(id, &mut input)?;
     let path = match id {
         ids::SEARCH => "/search",
         ids::CONTENTS => "/contents",
@@ -390,7 +530,81 @@ fn invoke_with(
     Ok(output)
 }
 
-dekopon_provider_sdk::export_provider_with_cli!(Exa, bindings);
+fn expand_schema_strings(id: &str, input: &mut Value) -> Result<(), ProviderError> {
+    fn expand(slot: &mut Value) -> Result<(), ProviderError> {
+        let text = slot.as_str().ok_or_else(invalid)?;
+        if text.len() > 65_536 {
+            return Err(invalid());
+        }
+        let object: Value = serde_json::from_str(text).map_err(|_| invalid())?;
+        if !object.is_object() {
+            return Err(invalid());
+        }
+        *slot = object;
+        Ok(())
+    }
+    let Some(root) = input.as_object_mut() else {
+        return Err(invalid());
+    };
+    if matches!(id, ids::SEARCH | ids::ANSWER)
+        && let Some(slot) = root.get_mut("outputSchema")
+        && (!slot.is_null() || id == ids::ANSWER)
+    {
+        expand(slot)?;
+    }
+    let options = if id == ids::SEARCH {
+        root.get_mut("contents")
+    } else {
+        Some(input)
+    };
+    if let Some(slot) = options
+        .and_then(|v| v.get_mut("summary"))
+        .and_then(|v| v.get_mut("schema"))
+    {
+        expand(slot)?;
+    }
+    Ok(())
+}
+
+fn run_operation(
+    id: &str,
+    mut input: Value,
+    http: Http,
+    out: &mut Stdout,
+) -> Result<(), ProviderError> {
+    if let Some(object) = input.as_object_mut()
+        && object.get("stdin_json") == Some(&Value::Bool(true))
+    {
+        object.remove("stdin_json");
+        if !object.is_empty() {
+            return Err(invalid());
+        }
+        let mut stdin = provider::stdin()
+            .ok_or_else(|| ProviderError::usage("--input-json - requires stdin"))?;
+        let mut raw = Vec::new();
+        stdin
+            .by_ref()
+            .take(65_537)
+            .read_to_end(&mut raw)
+            .map_err(|_| ProviderError::usage("--input-json - requires valid JSON"))?;
+        if raw.is_empty() {
+            return Err(ProviderError::usage(
+                "--input-json - requires nonempty JSON",
+            ));
+        }
+        if raw.len() > 65_536 {
+            return Err(ProviderError::usage("--input-json - exceeds input limit"));
+        }
+        input = serde_json::from_slice(&raw)
+            .map_err(|_| ProviderError::usage("--input-json - requires valid JSON"))?;
+    }
+    let output = invoke_with(id, input, |request| http.send(request))?;
+    serde_json::to_writer(&mut *out, &output)
+        .map_err(|_| ProviderError::new("output-failed", "could not write Exa response"))?;
+    out.write_all(b"\n")
+        .map_err(|_| ProviderError::new("output-failed", "could not write Exa response"))?;
+    Ok(())
+}
 
 #[cfg(test)]
 mod tests;
