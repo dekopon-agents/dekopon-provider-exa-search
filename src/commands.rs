@@ -143,7 +143,9 @@ fn extraction(map: &mut Map<String, Value>, args: Extraction, nested: bool) -> R
         }
         options = value.as_object().expect("checked object").clone();
         // Preserve --contents-json's object syntax while the typed proposal uses a string leaf.
-        if let Some(schema) = options.get_mut("summary").and_then(|v| v.get_mut("schema")) {
+        if let Some(schema) = options.get_mut("summary").and_then(|v| v.get_mut("schema"))
+            && !schema.is_null()
+        {
             let text =
                 serde_json::to_string(schema).map_err(|_| usage("invalid summary schema"))?;
             if text.len() > 65_536 || !schema.is_object() {

@@ -219,7 +219,7 @@ fn input_schema(id: &str) -> Value {
         "query":{"type":"string"}, "verbosity":{"type":"string"},
         "dynamic":{"type":"boolean"}, "maxCharacters":{"type":"integer"}
     }));
-    let summary = object(json!({"query":{"type":"string"}, "schema":schema_string}));
+    let summary = object(json!({"query":{"type":"string"}, "schema":nullable(schema_string)}));
     let extras = object(json!({
         "links":{"type":"integer"}, "imageLinks":{"type":"integer"},
         "richImageLinks":{"type":"integer"}, "richLinks":{"type":"integer"},
@@ -560,6 +560,7 @@ fn expand_schema_strings(id: &str, input: &mut Value) -> Result<(), ProviderErro
     if let Some(slot) = options
         .and_then(|v| v.get_mut("summary"))
         .and_then(|v| v.get_mut("schema"))
+        && !slot.is_null()
     {
         expand(slot)?;
     }

@@ -158,15 +158,98 @@ fn malformed_schema_and_invalid_input_never_send() {
         (ids::CONTENTS, json!({"ids":["doc"],"urls":["https://x"]})),
         (ids::ANSWER, json!({"query":"q","stream":true})),
         (ids::ANSWER, json!({"query":"q","outputSchema":null})),
+        (
+            ids::SEARCH,
+            json!({"query":"q","contents":{"context":true}}),
+        ),
+        (ids::SEARCH, json!({"query":"q","type":"neural"})),
+        (
+            ids::SEARCH,
+            json!({"query":"q","outputSchema":r#"{"type":"object","properties":[]}"#}),
+        ),
+        (
+            ids::SEARCH,
+            json!({"query":"q","contents":{"highlights":{"dynamic":true,"maxCharacters":1}}}),
+        ),
+        (
+            ids::SEARCH,
+            json!({"query":"q","startPublishedDate":"not a date"}),
+        ),
+        (
+            ids::SEARCH,
+            json!({"query":"q","startPublishedDate":"2026-02-01T00:00:00Z","endPublishedDate":"2026-01-01T00:00:00Z"}),
+        ),
+        (
+            ids::SEARCH,
+            json!({"query":"q","startCrawlDate":"2026-01-01T00:00:00Z"}),
+        ),
+        (ids::CONTENTS, json!({"ids":[]})),
+        (ids::CONTENTS, json!({"ids":null,"urls":["https://x"]})),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"snapshotAsOf":"yesterday"}),
+        ),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"highlights":{"numSentences":2}}),
+        ),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"livecrawl":"always"}),
+        ),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"extras":{"links":1001}}),
+        ),
+        (ids::ANSWER, json!({"query":"q","Authorization":"x"})),
+        (ids::ANSWER, json!({"query":"q","model":"invalid"})),
+        (
+            ids::ANSWER,
+            json!({"query":"q","outputSchema":r#"{"type":false,"properties":[]}"#}),
+        ),
+        (
+            ids::ANSWER,
+            json!({"query":"q","outputSchema":r#"{"type":"object","required":[3]}"#}),
+        ),
+        (
+            ids::ANSWER,
+            json!({"query":"q","outputSchema":r#"{"type":null}"#}),
+        ),
+        (
+            ids::ANSWER,
+            json!({"query":"q","outputSchema":r#"{"additionalProperties":"yes"}"#}),
+        ),
+        (
+            ids::ANSWER,
+            json!({"query":"q","outputSchema":r#"{"type":"object","properties":[]}"#}),
+        ),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"summary":{"schema":"[]"}}),
+        ),
+        (
+            ids::CONTENTS,
+            json!({"urls":["https://x"],"summary":{"schema":"{"}}),
+        ),
     ] {
         let native = Native::<Exa>::new();
         let result = native.call(id, &input.to_string());
-        assert_ne!(result.status, 0);
+        assert_eq!(result.status, 1, "{id}: {input}");
         assert!(result.stdout.is_empty());
+        assert!(
+            result
+                .stderr
+                .contains("input does not match the Exa operation contract"),
+            "{id}: {input}: {}",
+            result.stderr
+        );
         assert!(native.requests().is_empty());
     }
     for (status, body) in [
+        (400, b"secret".to_vec()),
         (401, b"secret".to_vec()),
+        (403, b"secret".to_vec()),
+        (422, b"secret".to_vec()),
         (429, b"secret".to_vec()),
         (503, b"secret".to_vec()),
         (200, b"not-json".to_vec()),
@@ -181,10 +264,78 @@ fn malformed_schema_and_invalid_input_never_send() {
             },
         ));
         let result = native.call(ids::SEARCH, &json!({"query":"q"}).to_string());
-        assert_ne!(result.status, 0);
+        assert_eq!(result.status, 1, "{status}");
         assert!(result.stdout.is_empty());
-        assert!(!result.stderr.contains("secret"));
+        assert_eq!(
+            result.stderr,
+            if status == 200 {
+                "Exa returned invalid JSON\n"
+            } else {
+                "Exa refused the request\n"
+            }
+        );
         assert_eq!(native.requests().len(), 1);
+    }
+}
+#[test]
+fn nullable_summary_schema_preserves_exact_exa_request() {
+    for (id, input, args) in [
+        (
+            ids::SEARCH,
+            json!({"query":"q","contents":{"summary":{"schema":null}}}),
+            vec![
+                "search",
+                "--input-json",
+                r#"{"query":"q","contents":{"summary":{"schema":null}}}"#,
+            ],
+        ),
+        (
+            ids::CONTENTS,
+            json!({"ids":["doc"],"summary":{"schema":null}}),
+            vec![
+                "contents",
+                "--id",
+                "doc",
+                "--contents-json",
+                r#"{"summary":{"schema":null}}"#,
+            ],
+        ),
+    ] {
+        let proposed = proposal(&args, false, id);
+        assert_eq!(
+            proposed, input,
+            "null must not be rewritten by CLI proposal"
+        );
+        let native = Native::<Exa>::new().http(HttpScript::new(
+            "api.exa.ai",
+            "POST",
+            response(json!({"results":[]})),
+        ));
+        let result = native.call(id, &proposed.to_string());
+        assert_eq!(result.status, 0, "{}", result.stderr);
+        assert_eq!(native.requests().len(), 1);
+        assert_eq!(
+            native.requests()[0].body,
+            serde_json::to_vec(&input).unwrap()
+        );
+        assert!(result.stderr.is_empty());
+        assert_eq!(result.stdout, b"{\"results\":[]}\n");
+    }
+    let manifest = provider::manifest::<Exa>().unwrap();
+    for cap in manifest.capabilities.iter().take(2) {
+        let summary = if cap.id.as_str() == ids::SEARCH {
+            &cap.input_schema["properties"]["contents"]["anyOf"][0]["properties"]["summary"]
+        } else {
+            &cap.input_schema["properties"]["summary"]
+        };
+        assert_eq!(
+            summary["anyOf"][0]["properties"]["schema"]["anyOf"][0]["type"],
+            "string"
+        );
+        assert_eq!(
+            summary["anyOf"][0]["properties"]["schema"]["anyOf"][1]["type"],
+            "null"
+        );
     }
 }
 #[test]
