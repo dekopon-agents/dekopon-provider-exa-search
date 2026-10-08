@@ -1,11 +1,11 @@
 //! Exa search, contents and buffered answers over broker-mediated HTTP.
-//! Only fixed paths on api.exa.ai are reachable. Authentication and authority belong to the broker.
 mod commands;
 mod models;
 
+use dekopon_provider_sdk::provider::endpoint::Base;
 use dekopon_provider_sdk::provider::{
     self, Capability, Code, Failure, Header, Http, HttpError, Proposal, Provider, Request,
-    Response, Stdout, Usage, method,
+    Response, Settings, Stdout, Usage, method,
 };
 use dekopon_provider_sdk::{EffectKind, RiskLevel};
 use models::{BoolOr, ContentsOptions, StringOrList};
@@ -21,6 +21,19 @@ pub(crate) mod ids {
     pub const SEARCH: &str = "exa.search";
     pub const CONTENTS: &str = "exa.contents";
     pub const ANSWER: &str = "exa.answer";
+}
+
+const EXA_API: Base = Base::from_static("https://api.exa.ai");
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase", deny_unknown_fields)]
+pub struct ExaSettings {
+    #[serde(default = "default_base")]
+    base_url: Base,
+}
+
+fn default_base() -> Base {
+    EXA_API
 }
 
 pub struct Exa;
@@ -113,10 +126,15 @@ macro_rules! operation {
             const EFFECT: EffectKind = EffectKind::ReadOnly;
             const RISK: RiskLevel = RiskLevel::Medium;
             type Input = OperationInput<$type>;
-            type Needs = Http;
+            type Needs = (Settings<ExaSettings>, Http);
             type Error = ProviderError;
-            fn run(input: Self::Input, http: Http, out: &mut Stdout) -> Result<(), ProviderError> {
-                run_operation($id, input.value, http, out)
+            fn run(
+                input: Self::Input,
+                (settings, http): Self::Needs,
+                out: &mut Stdout,
+            ) -> Result<(), ProviderError> {
+                let base = settings.into_inner().base_url;
+                run_operation($id, input.value, &base, http, out)
             }
         }
     };
@@ -472,6 +490,7 @@ fn validate(id: &str, input: &Value) -> Result<bool, ProviderError> {
 fn invoke_with(
     id: &str,
     mut input: Value,
+    base: &Base,
     mut send: impl FnMut(Request) -> Result<Response, HttpError>,
 ) -> Result<Value, ProviderError> {
     expand_schema_strings(id, &mut input)?;
@@ -491,11 +510,16 @@ fn invoke_with(
         Header::text(name, value)
             .map_err(|_| ProviderError::new("invalid-request", "could not construct Exa request"))
     };
-    let mut request = Request::new(method::POST, format!("https://api.exa.ai{path}"))
-        .map_err(|_| ProviderError::new("invalid-request", "could not construct Exa request"))?
-        .with_header(header("content-type", "application/json")?)
-        .with_header(header("accept", "application/json")?)
-        .with_body(serde_json::to_vec(&input).map_err(|_| invalid())?);
+    let mut request = Request::new(
+        method::POST,
+        base.join(path).map_err(|_| {
+            ProviderError::new("invalid-request", "could not construct Exa request")
+        })?,
+    )
+    .map_err(|_| ProviderError::new("invalid-request", "could not construct Exa request"))?
+    .with_header(header("content-type", "application/json")?)
+    .with_header(header("accept", "application/json")?)
+    .with_body(serde_json::to_vec(&input).map_err(|_| invalid())?);
     if beta {
         request = request.with_header(header("Exa-Beta", "dynamic-highlights-2026-08-28")?);
     }
@@ -570,6 +594,7 @@ fn expand_schema_strings(id: &str, input: &mut Value) -> Result<(), ProviderErro
 fn run_operation(
     id: &str,
     mut input: Value,
+    base: &Base,
     http: Http,
     out: &mut Stdout,
 ) -> Result<(), ProviderError> {
@@ -599,7 +624,7 @@ fn run_operation(
         input = serde_json::from_slice(&raw)
             .map_err(|_| ProviderError::usage("--input-json - requires valid JSON"))?;
     }
-    let output = invoke_with(id, input, |request| http.send(request))?;
+    let output = invoke_with(id, input, base, |request| http.send(request))?;
     serde_json::to_writer(&mut *out, &output)
         .map_err(|_| ProviderError::new("output-failed", "could not write Exa response"))?;
     out.write_all(b"\n")

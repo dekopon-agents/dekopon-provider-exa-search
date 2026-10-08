@@ -424,3 +424,61 @@ fn manifest_is_closed_and_cli_remains_narrow() {
         ));
     }
 }
+
+#[test]
+fn malformed_owner_settings_fail_before_any_request() {
+    for settings in [
+        json!({"baseUrl":"https://example.test?query=1"}),
+        json!({"baseUrl":"https://user@example.test"}),
+        json!({"baseUrl":"https://example.test#fragment"}),
+        json!({"baseUrl":"ftp://example.test"}),
+        json!({"baseUrl":"example.test"}),
+        json!({"baseUrl":17}),
+        json!({"baseUrl":null}),
+        json!({"baseUrl":true}),
+        json!({"baseUrl":{}}),
+        json!({"baseURL":"https://example.test"}),
+    ] {
+        for (id, input) in [
+            (ids::SEARCH, json!({"query":"orchards"})),
+            (ids::CONTENTS, json!({"urls":["https://example.org"]})),
+            (ids::ANSWER, json!({"query":"orchards"})),
+        ] {
+            let native = Native::<Exa>::new().settings(settings.clone());
+            let result = native.call(id, &input.to_string());
+            assert_ne!(result.status, 0, "{settings}");
+            assert!(
+                result
+                    .stderr
+                    .contains("the provider settings do not match their schema"),
+                "{}",
+                result.stderr
+            );
+            assert!(native.requests().is_empty());
+        }
+    }
+}
+
+#[test]
+fn schemas_refuse_origin_controls_and_preserve_content_urls() {
+    let manifest = provider::manifest::<Exa>().unwrap();
+    for cap in &manifest.capabilities {
+        assert_eq!(cap.input_schema["additionalProperties"], false);
+        for field in ["baseUrl", "base_url", "endpoint", "apiUrl", "origin"] {
+            assert!(cap.input_schema["properties"].get(field).is_none());
+            let mut input = if cap.id.as_str() == ids::CONTENTS {
+                json!({"urls":["https://example.org"]})
+            } else {
+                json!({"query":"orchards"})
+            };
+            input[field] = json!("https://example.test");
+            let native = Native::<Exa>::new();
+            assert_ne!(native.call(cap.id.as_str(), &input.to_string()).status, 0);
+            assert!(native.requests().is_empty());
+        }
+    }
+    assert_eq!(
+        manifest.capabilities[1].input_schema["properties"]["urls"]["type"],
+        "array"
+    );
+}
